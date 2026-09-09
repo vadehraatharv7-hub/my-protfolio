@@ -1,0 +1,186 @@
+---
+// projects/index.astro - Dedicated Projects Space
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('projects');
+
+// Extract unique categories for interactive filtering
+const categories = ['ALL', ...new Set(projects.map((p) => p.data.category))];
+---
+
+<Layout
+  title="Projects Space // Hardened Architectures & Systems"
+  description="Explore production-grade Kubernetes security architectures, high-throughput network threat detectors, cloud telemetry pipelines, and air-gapped homelab setups."
+  classification="SYSTEM BLUEPRINT REPOSITORY // SEC_LEVEL_03"
+>
+  <div class="projects-page">
+    <div class="container">
+      <!-- Section Header -->
+      <header class="page-header">
+        <div class="header-pre font-mono text-neon-cyan">[ DIRECTORY // PROJECT_SPACE ]</div>
+        <h1 class="page-title font-mono">ENGINEERED DEFENSIVE SYSTEMS</h1>
+        <p class="page-lead">
+          Production-tested infrastructure, distributed pipelines, and offensive-defense research laboratories.
+          Every project features comprehensive architecture documentation, threat models, and open-source GitHub repositories.
+        </p>
+
+        <!-- Dynamic Filter Controls -->
+        <div class="filter-bar font-mono" id="category-filter-bar">
+          <span class="filter-label text-muted">FILTER_BY:</span>
+          {
+            categories.map((cat, idx) => (
+              <button
+                class={`filter-btn ${idx === 0 ? 'active' : ''}`}
+                data-category={cat}
+              >
+                {cat}
+              </button>
+            ))
+          }
+        </div>
+      </header>
+
+      <!-- Projects Grid with Anti-Gravity Levitation Hover -->
+      <div class="projects-grid" id="projects-grid">
+        {
+          projects.map((project) => (
+            <div class="project-wrapper" data-category={project.data.category}>
+              <ProjectCard
+                slug={project.id}
+                title={project.data.title}
+                tagline={project.data.tagline}
+                description={project.data.description}
+                category={project.data.category}
+                technologies={project.data.technologies}
+                github={project.data.github}
+                demo={project.data.demo}
+                status={project.data.status}
+                metrics={project.data.metrics}
+                featured={project.data.featured}
+              />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Client-side category filter for interactive project exploration
+  const filterButtons = document.querySelectorAll('#category-filter-bar .filter-btn');
+  const projectWrappers = document.querySelectorAll('#projects-grid .project-wrapper');
+
+  filterButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      // Toggle active button state
+      filterButtons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const selectedCat = btn.getAttribute('data-category');
+
+      // Filter project cards with fade transition
+      projectWrappers.forEach((wrapper) => {
+        const itemCat = wrapper.getAttribute('data-category');
+        if (selectedCat === 'ALL' || itemCat === selectedCat) {
+          (wrapper as HTMLElement).style.display = 'block';
+        } else {
+          (wrapper as HTMLElement).style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .projects-page {
+    padding: 3.5rem 0 6rem 0;
+  }
+
+  .page-header {
+    margin-bottom: 3.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+  }
+
+  .header-pre {
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-title {
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+    margin-bottom: 1.25rem;
+    text-shadow: 0 0 25px rgba(0, 240, 255, 0.25);
+  }
+
+  .page-lead {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    max-width: 820px;
+    margin-bottom: 2rem;
+  }
+
+  /* Filter Bar */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.78rem;
+  }
+
+  .filter-label {
+    margin-right: 0.4rem;
+  }
+
+  .filter-btn {
+    background: rgba(12, 20, 43, 0.6);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    color: var(--color-text-secondary);
+    padding: 0.4rem 0.85rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    transition: all 0.25s ease;
+  }
+
+  .filter-btn:hover {
+    color: var(--color-neon-cyan);
+    border-color: var(--color-neon-cyan);
+    background: rgba(0, 240, 255, 0.08);
+  }
+
+  .filter-btn.active {
+    color: #040711;
+    background: var(--color-neon-cyan);
+    border-color: var(--color-neon-cyan);
+    font-weight: 700;
+    box-shadow: var(--glow-cyan-sm);
+  }
+
+  /* Grid */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 2rem;
+  }
+
+  .project-wrapper {
+    height: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

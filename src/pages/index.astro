@@ -1,0 +1,538 @@
+---
+// index.astro - Anti-Gravity Cyber Landing & Operations Center
+import Layout from '../layouts/Layout.astro';
+import FloatingTechStack from '../components/FloatingTechStack.astro';
+import CyberHudStatus from '../components/CyberHudStatus.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// Load projects and blog posts from Astro Content Collections
+const allProjects = await getCollection('projects');
+const featuredProjects = allProjects.slice(0, 4);
+
+const allPosts = await getCollection('blog');
+const recentPosts = allPosts
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+  .slice(0, 3);
+---
+
+<Layout
+  title="Atharv Vadehra // Security Architecture & DevOps Engineer"
+  description="Cybersecurity Master's candidate & Cloud/DevOps Architect specializing in Kubernetes, Zero-Trust, eBPF, and Network Security Monitoring."
+  classification="UNRESTRICTED PUBLIC CLEARANCE"
+>
+  <!-- Real-Time Cyber Operations Telemetry Ribbon -->
+  <CyberHudStatus />
+
+  <!-- Hero Section with Anti-Gravity Levitation -->
+  <section class="hero-section">
+    <div class="container hero-container">
+      <div class="hero-content">
+        <!-- Clearance Tag -->
+        <div class="hero-clearance font-mono levitate-slow">
+          <span class="clearance-beacon"></span>
+          <span>IDENTITY VERIFIED // ATHARV VADEHRA</span>
+          <span class="clearance-level">[TOP SECRET]</span>
+        </div>
+
+        <!-- Main Title with Anti-Gravity Glow -->
+        <h1 class="hero-title">
+          <span class="glitch-text" data-text="SECURING">SECURING</span>
+          <span class="text-neon-cyan"> CLOUD VOIDS</span>
+          <br />
+          <span class="hero-subtext font-mono">&amp; ZERO-TRUST ARCHITECTURES</span>
+        </h1>
+
+        <p class="hero-description">
+          Cybersecurity Master's researcher & DevOps/Cloud Infrastructure Engineer.
+          Specialized in orchestrating weightless, resilient multi-cloud environments,
+          kernel-level <span class="text-neon-cyan">eBPF security probes</span>,
+          automated <span class="text-neon-green">Kubernetes service meshes</span>,
+          and high-throughput network threat hunting pipelines.
+        </p>
+
+        <!-- CTA Action Vectors -->
+        <div class="hero-ctas">
+          <a href={`${baseUrl}/projects`} class="cyber-btn">
+            <span>EXPLORE PROJECT REPOSITORY</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+
+          <a href={`${baseUrl}/blog`} class="cyber-btn variant-green">
+            <span>ACCESS INTEL LOGS</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+          </a>
+
+          <a
+            href="https://github.com/atharvvadehra"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="cyber-btn variant-ghost"
+          >
+            <span>GITHUB</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Interactive Anti-Gravity Terminal Window -->
+      <div class="hero-terminal anti-gravity-card levitate-medium">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+          </div>
+          <div class="terminal-title font-mono">atharv@sec-ops:~ (zsh)</div>
+          <div class="terminal-mode font-mono text-neon-green">ACTIVE</div>
+        </div>
+
+        <div class="terminal-console font-mono">
+          <p class="cmd-line">
+            <span class="prompt text-neon-cyan">atharv@defense-node</span>:<span class="text-neon-purple">~</span>$&nbsp;
+            <span class="typing-text">cat /etc/security/clearance.conf</span>
+          </p>
+          <div class="terminal-output">
+            <div class="out-row"><span class="out-key text-muted">OPERATIVE:</span> Atharv Vadehra</div>
+            <div class="out-row"><span class="out-key text-muted">SPECIALIZATION:</span> Cloud Architecture // Cyber Threat Analysis</div>
+            <div class="out-row"><span class="out-key text-muted">EDUCATION:</span> M.S. in Cybersecurity Candidate</div>
+            <div class="out-row"><span class="out-key text-muted">CORE_STACK:</span> K8s, Docker, Terraform, Python, Cilium, AWS</div>
+            <div class="out-row"><span class="out-key text-muted">DEFENSE_POSTURE:</span> Zero-Trust (NIST 800-207) Enforced</div>
+            <div class="out-row"><span class="out-key text-muted">DEPLOYMENT:</span> 100% Statically Generated // GitHub Pages</div>
+          </div>
+          <p class="cmd-line next-line">
+            <span class="prompt text-neon-cyan">atharv@defense-node</span>:<span class="text-neon-purple">~</span>$&nbsp;
+            <span class="cyber-cursor"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Zero-Gravity Tech Stack Component -->
+    <div class="container">
+      <FloatingTechStack />
+    </div>
+  </section>
+
+  <!-- Key Metrics / Capability Indicators -->
+  <section class="metrics-section">
+    <div class="container">
+      <div class="metrics-card-grid">
+        <div class="stat-box anti-gravity-card">
+          <div class="stat-number font-mono text-neon-cyan">0-TRUST</div>
+          <div class="stat-title font-mono">ARCHITECTURAL MODEL</div>
+          <p class="stat-desc">Zero implicit trust; mutual TLS &amp; cryptographic pod attestations.</p>
+        </div>
+
+        <div class="stat-box anti-gravity-card">
+          <div class="stat-number font-mono text-neon-green">10 Gbps</div>
+          <div class="stat-title font-mono">WIRE-SPEED TELEMETRY</div>
+          <p class="stat-desc">Low-latency packet inspection with Suricata, Zeek, &amp; Kafka pipelines.</p>
+        </div>
+
+        <div class="stat-box anti-gravity-card">
+          <div class="stat-number font-mono text-neon-amber">IaC DRIVEN</div>
+          <div class="stat-title font-mono">INFRASTRUCTURE AS CODE</div>
+          <p class="stat-desc">Fully declarative provisioning via Terraform, Ansible, and Helm.</p>
+        </div>
+
+        <div class="stat-box anti-gravity-card">
+          <div class="stat-number font-mono text-neon-purple">eBPF HOOKS</div>
+          <div class="stat-title font-mono">KERNEL SECURITY</div>
+          <p class="stat-desc">In-kernel observability and bypass of legacy slow packet filtering.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Projects Space -->
+  <section class="section projects-preview-section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-tag font-mono text-neon-cyan">// 02.PROJECT_SPACE</div>
+          <h2 class="section-title">HARDENED SECURITY &amp; CLOUD SYSTEMS</h2>
+        </div>
+        <a href={`${baseUrl}/projects`} class="cyber-btn variant-ghost">
+          <span>VIEW ALL PROJECTS ({allProjects.length}) =&gt;</span>
+        </a>
+      </div>
+
+      <div class="projects-grid">
+        {
+          featuredProjects.map((project) => (
+            <ProjectCard
+              slug={project.id}
+              title={project.data.title}
+              tagline={project.data.tagline}
+              description={project.data.description}
+              category={project.data.category}
+              technologies={project.data.technologies}
+              github={project.data.github}
+              demo={project.data.demo}
+              status={project.data.status}
+              metrics={project.data.metrics}
+              featured={project.data.featured}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Intel Logs (Markdown Blog) -->
+  <section class="section blog-preview-section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <div class="section-tag font-mono text-neon-green">// 03.INTEL_LOGS</div>
+          <h2 class="section-title">CLASSIFIED DECRYPTED DISPATCHES</h2>
+        </div>
+        <a href={`${baseUrl}/blog`} class="cyber-btn variant-green">
+          <span>ARCHIVE DIRECTORY =&gt;</span>
+        </a>
+      </div>
+
+      <div class="intel-grid">
+        {
+          recentPosts.map((post) => (
+            <article class="intel-card anti-gravity-card">
+              <div class="intel-card-header font-mono">
+                <span class="text-neon-cyan">LOG-{post.data.date.replace(/-/g, '')}</span>
+                <span class="text-muted">{post.data.time}</span>
+              </div>
+              <h3 class="intel-title font-mono">
+                <a href={`${baseUrl}/blog/${post.id}`} class="intel-link">
+                  {post.data.title}
+                </a>
+              </h3>
+              <p class="intel-sub">{post.data.subtitle}</p>
+              
+              <div class="intel-footer font-mono">
+                <span class="text-neon-green font-mono text-xs">
+                  AUTHOR: {post.data.author || 'Atharv Vadehra'}
+                </span>
+                <a href={`${baseUrl}/blog/${post.id}`} class="read-more-link">
+                  DECRYPT LOG &gt;&gt;
+                </a>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* Hero Section */
+  .hero-section {
+    padding: 4.5rem 0 2rem 0;
+    position: relative;
+  }
+
+  .hero-container {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 3.5rem;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .hero-clearance {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0.85rem;
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    border-radius: 4px;
+    font-size: 0.76rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .clearance-beacon {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-neon-cyan);
+    box-shadow: 0 0 8px var(--color-neon-cyan);
+    animation: pulse-neon 1.8s infinite;
+  }
+
+  .clearance-level {
+    color: var(--color-neon-crimson);
+    font-weight: 700;
+  }
+
+  .hero-title {
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-subtext {
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    font-weight: 600;
+    color: var(--color-neon-green);
+    letter-spacing: 0.02em;
+  }
+
+  .hero-description {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    margin-bottom: 2.25rem;
+    max-width: 600px;
+  }
+
+  .hero-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  /* Terminal Window */
+  .hero-terminal {
+    background: rgba(5, 9, 22, 0.92);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  }
+
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 1rem;
+    background: rgba(2, 5, 12, 0.95);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+  }
+
+  .terminal-dots {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .dot.red { background: #ff5f56; }
+  .dot.yellow { background: #ffbd2e; }
+  .dot.green { background: #27c93f; }
+
+  .terminal-title {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .terminal-mode {
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+  }
+
+  .terminal-console {
+    padding: 1.5rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .cmd-line {
+    margin-bottom: 1rem;
+  }
+
+  .terminal-output {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-left: 0.5rem;
+    margin-bottom: 1.25rem;
+    border-left: 2px solid rgba(0, 240, 255, 0.3);
+    font-size: 0.8rem;
+  }
+
+  .out-key {
+    display: inline-block;
+    min-width: 140px;
+  }
+
+  /* Metrics Section */
+  .metrics-section {
+    padding: 2.5rem 0;
+  }
+
+  .metrics-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .stat-box {
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 240, 255, 0.18);
+  }
+
+  .stat-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+
+  .stat-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-desc {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  /* Shared Section Headers */
+  .section {
+    padding: 4.5rem 0;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+  }
+
+  .section-tag {
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: var(--font-mono);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.75rem;
+  }
+
+  /* Intel Logs Grid */
+  .intel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .intel-card {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .intel-card-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .intel-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 0.75rem;
+  }
+
+  .intel-link {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .intel-link:hover {
+    color: var(--color-neon-cyan);
+  }
+
+  .intel-sub {
+    font-size: 0.86rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+
+  .intel-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px dashed rgba(0, 240, 255, 0.15);
+    font-size: 0.78rem;
+  }
+
+  .read-more-link {
+    color: var(--color-neon-cyan);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .read-more-link:hover {
+    color: #ffffff;
+    transform: translateX(3px);
+  }
+
+  @media (max-width: 968px) {
+    .hero-container {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .hero-title {
+      font-size: 2.4rem;
+    }
+  }
+</style>

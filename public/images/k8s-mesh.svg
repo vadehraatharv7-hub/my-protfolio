@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#040711" />
+      <stop offset="50%" stop-color="#081026" />
+      <stop offset="100%" stop-color="#02040a" />
+    </linearGradient>
+    <linearGradient id="cyan-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f0ff" />
+      <stop offset="100%" stop-color="#00ff66" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)" />
+
+  <!-- Cyber Grid Pattern -->
+  <g opacity="0.15">
+    <path d="M0,0 H1200 M0,70 H1200 M0,140 H1200 M0,210 H1200 M0,280 H1200 M0,350 H1200 M0,420 H1200 M0,490 H1200 M0,560 H1200 M0,630 H1200" stroke="#00f0ff" stroke-width="1" />
+    <path d="M0,0 V630 M100,0 V630 M200,0 V630 M300,0 V630 M400,0 V630 M500,0 V630 M600,0 V630 M700,0 V630 M800,0 V630 M900,0 V630 M1000,0 V630 M1100,0 V630 M1200,0 V630" stroke="#00f0ff" stroke-width="1" />
+  </g>
+
+  <!-- Center Decorative Hexagon Mesh (Kubernetes / eBPF) -->
+  <g transform="translate(600, 315)">
+    <!-- Outer radar rings -->
+    <circle r="220" fill="none" stroke="#00f0ff" stroke-width="1.5" opacity="0.3" stroke-dasharray="12, 8" />
+    <circle r="160" fill="none" stroke="#00ff66" stroke-width="2" opacity="0.5" />
+    <circle r="90" fill="none" stroke="#00f0ff" stroke-width="1" opacity="0.4" />
+
+    <!-- Hexagon Node 1 -->
+    <polygon points="0,-75 65,-37 65,37 0,75 -65,37 -65,-37" fill="none" stroke="url(#cyan-glow)" stroke-width="3" filter="url(#glow)"/>
+    
+    <!-- Central Kernel Core -->
+    <circle r="28" fill="#00f0ff" opacity="0.2" />
+    <circle r="14" fill="#00ff66" filter="url(#glow)" />
+
+    <!-- Workload Mesh Nodes -->
+    <circle cx="-130" cy="-60" r="10" fill="#00f0ff" filter="url(#glow)" />
+    <line x1="0" y1="0" x2="-130" y2="-60" stroke="#00f0ff" stroke-width="2" stroke-dasharray="4,4" />
+
+    <circle cx="130" cy="-60" r="10" fill="#00f0ff" filter="url(#glow)" />
+    <line x1="0" y1="0" x2="130" y2="-60" stroke="#00f0ff" stroke-width="2" stroke-dasharray="4,4" />
+
+    <circle cx="140" cy="80" r="10" fill="#00ff66" filter="url(#glow)" />
+    <line x1="0" y1="0" x2="140" y2="80" stroke="#00ff66" stroke-width="2" />
+
+    <circle cx="-140" cy="80" r="10" fill="#00ff66" filter="url(#glow)" />
+    <line x1="0" y1="0" x2="-140" y2="80" stroke="#00ff66" stroke-width="2" />
+  </g>
+
+  <!-- Cyber Terminal Header Overlay -->
+  <text x="70" y="80" font-family="monospace" font-size="18" fill="#00f0ff" letter-spacing="4">[ SEC_ARCH // ZERO-TRUST KUBERNETES ]</text>
+  <text x="70" y="120" font-family="monospace" font-size="36" font-weight="bold" fill="#ffffff">CILIUM eBPF WORKLOAD ATTESTATION</text>
+  <text x="70" y="155" font-family="monospace" font-size="16" fill="#94a3b8">KERNEL-LEVEL POLICY ENFORCEMENT &amp; SPIFFE/SPIRE MTLS IDENTITY</text>
+
+  <!-- HUD Telemetry Footers -->
+  <text x="70" y="560" font-family="monospace" font-size="14" fill="#00ff66">STATUS: ENFORCING</text>
+  <text x="70" y="585" font-family="monospace" font-size="14" fill="#64748b">ALGORITHM: AES-256-GCM // mTLS v1.3 // eBPF HOOKS: ATTACHED</text>
+  <text x="1000" y="585" font-family="monospace" font-size="14" fill="#00f0ff" text-anchor="end">NODE_ID: K8S-SEC-01</text>
+</svg>

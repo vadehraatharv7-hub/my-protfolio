@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050814" />
+      <stop offset="60%" stop-color="#0a1226" />
+      <stop offset="100%" stop-color="#020409" />
+    </linearGradient>
+    <filter id="crimson-glow">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg2)" />
+
+  <!-- Grid -->
+  <g opacity="0.12">
+    <path d="M0,70 H1200 M0,140 H1200 M0,210 H1200 M0,280 H1200 M0,350 H1200 M0,420 H1200 M0,490 H1200 M0,560 H1200" stroke="#ff0055" stroke-width="1" />
+    <path d="M150,0 V630 M300,0 V630 M450,0 V630 M600,0 V630 M750,0 V630 M900,0 V630 M1050,0 V630" stroke="#ff0055" stroke-width="1" />
+  </g>
+
+  <!-- Network Waveforms & Anomaly Pulses -->
+  <g transform="translate(0, 315)">
+    <!-- Baseline Traffic -->
+    <path d="M0,0 Q150,-40 300,20 T600,-20 T900,40 T1200,0" fill="none" stroke="#00f0ff" stroke-width="2.5" opacity="0.4" />
+    <!-- Anomaly Spike -->
+    <path d="M400,10 L520,-20 L580,180 L620,-190 L670,40 L740,-10" fill="none" stroke="#ff0055" stroke-width="3.5" filter="url(#crimson-glow)" />
+    
+    <!-- Anomaly Radar Beacon -->
+    <circle cx="620" cy="-190" r="14" fill="#ff0055" filter="url(#crimson-glow)" />
+    <circle cx="620" cy="-190" r="30" fill="none" stroke="#ff0055" stroke-width="1.5" opacity="0.7" stroke-dasharray="6,4" />
+    <text x="645" y="-185" font-family="monospace" font-size="14" font-weight="bold" fill="#ff0055">[ THREAT DETECTED // CVE-2026-ALERT ]</text>
+  </g>
+
+  <!-- Titles -->
+  <text x="70" y="80" font-family="monospace" font-size="18" fill="#ff0055" letter-spacing="4">[ NETWORK_TELEMETRY // SURICATA + ZEEK ]</text>
+  <text x="70" y="120" font-family="monospace" font-size="36" font-weight="bold" fill="#ffffff">INTRUSION DETECTION &amp; PACKET PIPELINE</text>
+  <text x="70" y="155" font-family="monospace" font-size="16" fill="#94a3b8">KAFKA STREAM INGESTION &amp; REAL-TIME HEURISTIC CORRELATION</text>
+
+  <text x="70" y="585" font-family="monospace" font-size="14" fill="#ff0055">MITRE ATT&amp;CK: T1071 (APPLICATION LAYER PROTOCOL)</text>
+  <text x="1130" y="585" font-family="monospace" font-size="14" fill="#00f0ff" text-anchor="end">SURICATA_PROBES: 10 Gbps WIRE-SPEED</text>
+</svg>

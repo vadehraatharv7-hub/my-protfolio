@@ -1,0 +1,59 @@
+---
+// blog/[...slug].astro - Dynamic Routing & Parsing Template for Markdown Posts (Astro 5)
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
+
+// Statically generate all routes for GitHub Pages deployment
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+/**
+ * Exact parsing logic for requested YAML frontmatter schema:
+ * - title: Post heading
+ * - subtitle: Post overview
+ * - date: Publication timestamp (YYYY-MM-DD)
+ * - time: Reading duration / time
+ * - header_image: Main post artwork path or URL
+ * - author: Name with default fallback to 'Atharv Vadehra'
+ * - sources: Array of references or links
+ * - classification: Optional classified security clearance badge
+ * - tags: Optional topic keywords
+ */
+const {
+  title,
+  subtitle,
+  date,
+  time,
+  header_image,
+  author = 'Atharv Vadehra',
+  sources = [],
+  classification,
+  tags,
+} = post.data;
+---
+
+<BlogPostLayout
+  title={title}
+  subtitle={subtitle}
+  date={date}
+  time={time}
+  header_image={header_image}
+  author={author}
+  sources={sources}
+  classification={classification}
+  tags={tags}
+>
+  <Content />
+</BlogPostLayout>

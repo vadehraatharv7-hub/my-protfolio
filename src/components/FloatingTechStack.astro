@@ -1,0 +1,150 @@
+---
+// FloatingTechStack.astro - Anti-Gravity Floating Technology Badges
+interface TechItem {
+  name: string;
+  category: 'Cloud' | 'DevOps' | 'Security' | 'Languages';
+  delay: string;
+  duration: string;
+  color: 'cyan' | 'green' | 'amber' | 'purple';
+  icon: string;
+}
+
+const techList: TechItem[] = [
+  { name: 'Kubernetes', category: 'DevOps', delay: '0s', duration: '5.2s', color: 'cyan', icon: 'k8s' },
+  { name: 'AWS Cloud', category: 'Cloud', delay: '1.2s', duration: '6.4s', color: 'amber', icon: 'aws' },
+  { name: 'GCP', category: 'Cloud', delay: '2.5s', duration: '5.8s', color: 'cyan', icon: 'gcp' },
+  { name: 'Terraform', category: 'DevOps', delay: '0.8s', duration: '7.1s', color: 'purple', icon: 'tf' },
+  { name: 'Docker', category: 'DevOps', delay: '1.8s', duration: '4.9s', color: 'cyan', icon: 'docker' },
+  { name: 'Python', category: 'Languages', delay: '0.4s', duration: '6.0s', color: 'green', icon: 'py' },
+  { name: 'FastAPI', category: 'Languages', delay: '2.1s', duration: '5.5s', color: 'green', icon: 'fastapi' },
+  { name: 'Cilium eBPF', category: 'Security', delay: '3.0s', duration: '6.7s', color: 'cyan', icon: 'ebpf' },
+  { name: 'Zeek & Suricata', category: 'Security', delay: '1.5s', duration: '5.3s', color: 'green', icon: 'zeek' },
+  { name: 'Zero-Trust (SPIFFE)', category: 'Security', delay: '2.8s', duration: '6.2s', color: 'purple', icon: 'zt' },
+  { name: 'Proxmox VE', category: 'DevOps', delay: '0.6s', duration: '5.7s', color: 'amber', icon: 'proxmox' },
+  { name: 'Linux Kernel / SOC', category: 'Security', delay: '2.2s', duration: '6.5s', color: 'green', icon: 'linux' },
+];
+---
+
+<div class="floating-tech-field">
+  <div class="tech-field-header">
+    <span class="font-mono text-xs text-neon-cyan">[ ZERO-GRAVITY HARDWARE & PROTOCOL STACK ]</span>
+    <span class="font-mono text-xs text-muted desktop-only">HOVER TO ENERGIZE</span>
+  </div>
+
+  <div class="badges-grid">
+    {
+      techList.map((tech) => (
+        <div
+          class={`tech-badge color-${tech.color}`}
+          style={`animation-delay: ${tech.delay}; animation-duration: ${tech.duration};`}
+        >
+          <div class="badge-inner">
+            <span class="tech-symbol font-mono">&gt;</span>
+            <span class="tech-name font-mono">{tech.name}</span>
+            <span class="tech-cat font-mono">{tech.category}</span>
+          </div>
+          <div class="tech-glow-shadow"></div>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .floating-tech-field {
+    margin: 2.5rem 0;
+    position: relative;
+  }
+
+  .tech-field-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed rgba(0, 240, 255, 0.2);
+  }
+
+  .badges-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  /* Anti-Gravity Floating Physics */
+  .tech-badge {
+    position: relative;
+    animation-name: anti-gravity-float;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    will-change: transform;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Alternate every second badge for organic movement */
+  .tech-badge:nth-child(even) {
+    animation-name: anti-gravity-float-alt;
+  }
+
+  .badge-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.95rem;
+    background: rgba(8, 14, 32, 0.75);
+    border: 1px solid rgba(0, 240, 255, 0.22);
+    border-radius: 6px;
+    backdrop-filter: blur(8px);
+    cursor: default;
+    transition: all 0.3s ease;
+  }
+
+  .tech-symbol {
+    font-size: 0.8rem;
+    color: var(--color-neon-cyan);
+    opacity: 0.7;
+  }
+
+  .tech-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #f1f5f9;
+  }
+
+  .tech-cat {
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+  }
+
+  /* Hover States with Anti-Gravity Elevation */
+  .tech-badge:hover {
+    transform: translateY(-8px) scale(1.08) !important;
+    z-index: 15;
+  }
+
+  .tech-badge.color-cyan:hover .badge-inner {
+    border-color: var(--color-neon-cyan);
+    box-shadow: 0 10px 25px -5px rgba(0, 240, 255, 0.4), inset 0 0 10px rgba(0, 240, 255, 0.2);
+  }
+
+  .tech-badge.color-green:hover .badge-inner {
+    border-color: var(--color-neon-green);
+    box-shadow: 0 10px 25px -5px rgba(0, 255, 102, 0.4), inset 0 0 10px rgba(0, 255, 102, 0.2);
+  }
+
+  .tech-badge.color-amber:hover .badge-inner {
+    border-color: var(--color-neon-amber);
+    box-shadow: 0 10px 25px -5px rgba(255, 183, 3, 0.4), inset 0 0 10px rgba(255, 183, 3, 0.2);
+  }
+
+  .tech-badge.color-purple:hover .badge-inner {
+    border-color: var(--color-neon-purple);
+    box-shadow: 0 10px 25px -5px rgba(157, 78, 221, 0.4), inset 0 0 10px rgba(157, 78, 221, 0.2);
+  }
+</style>

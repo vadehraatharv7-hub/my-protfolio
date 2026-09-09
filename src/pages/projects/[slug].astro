@@ -1,0 +1,33 @@
+---
+// projects/[slug].astro - Dynamic Documentation Sub-page for each project (Astro 5)
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import ProjectDocLayout from '../../layouts/ProjectDocLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'projects'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<ProjectDocLayout
+  title={entry.data.title}
+  tagline={entry.data.tagline}
+  category={entry.data.category}
+  technologies={entry.data.technologies}
+  github={entry.data.github}
+  demo={entry.data.demo}
+  status={entry.data.status}
+  metrics={entry.data.metrics}
+>
+  <Content />
+</ProjectDocLayout>

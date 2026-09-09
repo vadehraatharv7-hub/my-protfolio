@@ -1,0 +1,74 @@
+---
+// CyberHudStatus.astro - Real-time Cyber HUD Telemetry Strip
+---
+
+<div class="hud-strip font-mono" aria-label="System Telemetry Status">
+  <div class="container hud-strip-inner">
+    <div class="hud-cell">
+      <span class="hud-key text-muted">DEFCON:</span>
+      <span class="hud-val text-neon-green">LEVEL_5 [PEACE]</span>
+    </div>
+    <div class="hud-cell">
+      <span class="hud-key text-muted">ZERO_TRUST:</span>
+      <span class="hud-val text-neon-cyan">ENFORCED // SPIFFE-ID</span>
+    </div>
+    <div class="hud-cell">
+      <span class="hud-key text-muted">CLUSTERS:</span>
+      <span class="hud-val text-neon-green">EKS ● GKE ● PROXMOX</span>
+    </div>
+    <div class="hud-cell desktop-only">
+      <span class="hud-key text-muted">eBPF_PROBES:</span>
+      <span class="hud-val text-neon-cyan">1,248 HOOKS ACTIVE</span>
+    </div>
+    <div class="hud-cell">
+      <span class="hud-key text-muted">UTC_CLOCK:</span>
+      <span id="hud-clock" class="hud-val text-neon-amber">--:--:-- UTC</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Live UTC HUD clock
+  const clockEl = document.getElementById('hud-clock');
+  if (clockEl) {
+    const updateTime = () => {
+      const now = new Date();
+      clockEl.textContent = now.toISOString().substring(11, 19) + ' UTC';
+    };
+    updateTime();
+    setInterval(updateTime, 1000);
+  }
+</script>
+
+<style>
+  .hud-strip {
+    background: rgba(5, 9, 20, 0.95);
+    border-top: 1px solid rgba(0, 240, 255, 0.15);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    padding: 0.5rem 0;
+    font-size: 0.72rem;
+    overflow-x: auto;
+  }
+
+  .hud-strip-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    white-space: nowrap;
+  }
+
+  .hud-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .hud-key {
+    color: var(--color-text-muted);
+  }
+
+  .hud-val {
+    font-weight: 600;
+  }
+</style>
