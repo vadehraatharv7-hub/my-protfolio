@@ -22,7 +22,7 @@ const {
   header_image,
   author = 'Atharv Vadehra',
   sources = [],
-  classification = 'TOP SECRET // DECRYPTED_LOG',
+  classification = 'TECHNICAL NOTE // RESEARCH LOG',
   tags = [],
 } = Astro.props;
 
@@ -41,12 +41,12 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
       <!-- Breadcrumb & Back Navigation -->
       <div class="terminal-breadcrumbs">
         <a href={`${baseUrl}/blog`} class="back-link font-mono">
-          <span class="text-neon-cyan">&lt;==</span> RETURN TO LOG ARCHIVES
+          <span class="text-neon-cyan">&lt;==</span> RETURN TO TECHNICAL NOTES
         </a>
         <div class="classified-stamp font-mono">{classification}</div>
       </div>
 
-      <!-- Classified Dossier Header -->
+      <!-- Technical Dossier Header -->
       <header class="dossier-header anti-gravity-card">
         <div class="hud-corner top-left"></div>
         <div class="hud-corner top-right"></div>
@@ -55,12 +55,12 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
 
         <div class="header-meta-row font-mono">
           <span class="meta-tag text-neon-green">
-            <span class="pulse-pip"></span> DECRYPTED_DOCUMENT
+            <span class="pulse-pip"></span> TECHNICAL_DISPATCH
           </span>
           <span class="meta-divider">|</span>
           <span class="meta-tag">RECORD_ID: <span class="text-neon-cyan">LOG-{date.replace(/-/g, '')}</span></span>
           <span class="meta-divider">|</span>
-          <span class="meta-tag">ACCESS_LEVEL: <span class="text-neon-crimson">OMEGA</span></span>
+          <span class="meta-tag">STATUS: <span class="text-neon-green">PUBLISHED</span></span>
         </div>
 
         <h1 class="article-title">{title}</h1>
@@ -69,7 +69,7 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
         <!-- Personnel & Timestamp Dossier Grid -->
         <div class="dossier-meta-grid font-mono">
           <div class="meta-item">
-            <span class="meta-label text-neon-cyan">OFFICER / AUTHOR:</span>
+            <span class="meta-label text-neon-cyan">RESEARCHER / AUTHOR:</span>
             <span class="meta-value">{author}</span>
           </div>
           <div class="meta-item">
@@ -77,12 +77,12 @@ const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
             <span class="meta-value">{date}</span>
           </div>
           <div class="meta-item">
-            <span class="meta-label text-neon-amber">EXECUTION_TIME:</span>
+            <span class="meta-label text-neon-amber">READING_TIME:</span>
             <span class="meta-value">{time}</span>
           </div>
           <div class="meta-item">
             <span class="meta-label text-neon-purple">VERIFICATION:</span>
-            <span class="meta-value text-neon-green">SHA-256 VERIFIED</span>
+            <span class="meta-value text-neon-green">REPRODUCIBLE ARCHITECTURE</span>
           </div>
         </div>
 

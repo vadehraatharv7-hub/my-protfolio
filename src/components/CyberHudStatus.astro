@@ -2,38 +2,45 @@
 // CyberHudStatus.astro - Real-time Cyber HUD Telemetry Strip
 ---
 
-<div class="hud-strip font-mono" aria-label="System Telemetry Status">
+<div class="hud-strip font-mono" aria-label="Student Telemetry & Availability Status">
   <div class="container hud-strip-inner">
     <div class="hud-cell">
-      <span class="hud-key text-muted">DEFCON:</span>
-      <span class="hud-val text-neon-green">LEVEL_5 [PEACE]</span>
+      <span class="hud-key text-muted">ACADEMIC_STATUS:</span>
+      <span class="hud-val text-neon-green">DTU M.Sc. Cyber Security</span>
     </div>
     <div class="hud-cell">
-      <span class="hud-key text-muted">ZERO_TRUST:</span>
-      <span class="hud-val text-neon-cyan">ENFORCED // SPIFFE-ID</span>
+      <span class="hud-key text-muted">BASE:</span>
+      <span class="hud-val text-neon-cyan">Greater Copenhagen</span>
     </div>
     <div class="hud-cell">
-      <span class="hud-key text-muted">CLUSTERS:</span>
-      <span class="hud-val text-neon-green">EKS ● GKE ● PROXMOX</span>
+      <span class="hud-key text-muted">WORK_PERMIT:</span>
+      <span class="hud-val text-neon-green">Student Visa (90 hrs/month)</span>
     </div>
     <div class="hud-cell desktop-only">
-      <span class="hud-key text-muted">eBPF_PROBES:</span>
-      <span class="hud-val text-neon-cyan">1,248 HOOKS ACTIVE</span>
+      <span class="hud-key text-muted">TARGET_ROLE:</span>
+      <span class="hud-val text-neon-amber">Studentermedhjælper</span>
     </div>
     <div class="hud-cell">
-      <span class="hud-key text-muted">UTC_CLOCK:</span>
-      <span id="hud-clock" class="hud-val text-neon-amber">--:--:-- UTC</span>
+      <span class="hud-key text-muted">CPH_TIME:</span>
+      <span id="hud-clock" class="hud-val text-neon-cyan">--:--:-- CET</span>
     </div>
   </div>
 </div>
 
 <script>
-  // Live UTC HUD clock
+  // Live Copenhagen (CET/CEST) HUD clock
   const clockEl = document.getElementById('hud-clock');
   if (clockEl) {
     const updateTime = () => {
       const now = new Date();
-      clockEl.textContent = now.toISOString().substring(11, 19) + ' UTC';
+      const timeStr = now.toLocaleTimeString('en-GB', {
+        timeZone: 'Europe/Copenhagen',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      clockEl.textContent = `${timeStr} CPH`;
     };
     updateTime();
     setInterval(updateTime, 1000);

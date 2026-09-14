@@ -4,25 +4,42 @@ import Layout from '../../layouts/Layout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { getCollection } from 'astro:content';
 
-const projects = await getCollection('projects');
+const preferredOrder = [
+  'ai-soc-azure-honeypot',
+  'k8s-production-cluster',
+  'rag-vector-search',
+  'cloud-security-architecture',
+  'whatsapp-appointment-bot',
+  'sports-analytics-pipeline',
+];
+
+const rawProjects = await getCollection('projects');
+const projects = [...rawProjects].sort((a, b) => {
+  const indexA = preferredOrder.indexOf(a.id);
+  const indexB = preferredOrder.indexOf(b.id);
+  if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+  if (indexA !== -1) return -1;
+  if (indexB !== -1) return 1;
+  return 0;
+});
 
 // Extract unique categories for interactive filtering
 const categories = ['ALL', ...new Set(projects.map((p) => p.data.category))];
 ---
 
 <Layout
-  title="Projects Space // Hardened Architectures & Systems"
-  description="Explore production-grade Kubernetes security architectures, high-throughput network threat detectors, cloud telemetry pipelines, and air-gapped homelab setups."
-  classification="SYSTEM BLUEPRINT REPOSITORY // SEC_LEVEL_03"
+  title="Projects Space // Engineered Systems & Cloud Lab"
+  description="Explore production Kubernetes clusters, RAG search pipelines, cloud security architectures, and automated services built by Atharv Vadehra."
+  classification="PROJECT ARCHITECTURE REPOSITORY // ATHARV VADEHRA"
 >
   <div class="projects-page">
     <div class="container">
       <!-- Section Header -->
       <header class="page-header">
         <div class="header-pre font-mono text-neon-cyan">[ DIRECTORY // PROJECT_SPACE ]</div>
-        <h1 class="page-title font-mono">ENGINEERED DEFENSIVE SYSTEMS</h1>
+        <h1 class="page-title font-mono">ENGINEERED SYSTEMS &amp; PROJECTS</h1>
         <p class="page-lead">
-          Production-tested infrastructure, distributed pipelines, and offensive-defense research laboratories.
+          Production-tested cloud infrastructure, distributed AI pipelines, and graduate research laboratories.
           Every project features comprehensive architecture documentation, threat models, and open-source GitHub repositories.
         </p>
 
