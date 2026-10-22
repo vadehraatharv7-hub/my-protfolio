@@ -1,0 +1,466 @@
+---
+// Header.astro - Streamlined, Non-Congested Cyberpunk HUD Navigation Bar
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pathname = new URL(Astro.request.url).pathname;
+
+const navLinks = [
+  { name: 'EDUCATION', href: `${baseUrl}/#education` },
+  { name: 'EXPERIENCE', href: `${baseUrl}/#experience` },
+  { name: 'PROJECTS', href: `${baseUrl}/projects` },
+  { name: 'SKILLS', href: `${baseUrl}/#skills` },
+  { name: 'BLOG', href: `${baseUrl}/blog` },
+  { name: 'RESUME', href: `${baseUrl}/resume` },
+];
+---
+
+<header class="cyber-header">
+  <div class="container header-inner">
+    <!-- Brand / Candidate Monogram -->
+    <a href={`${baseUrl}/`} class="brand-link" aria-label="Atharv Vadehra Home">
+      <div class="brand-icon">
+        <span class="icon-bracket">[</span>
+        <span class="icon-core">AV</span>
+        <span class="icon-bracket">]</span>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">ATHARV<span class="brand-accent">.VADEHRA</span></span>
+        <span class="brand-sub font-mono">M.SC. CYBER SECURITY @ DTU</span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation Links (Spaced & Non-Overlapping) -->
+    <nav class="desktop-nav" aria-label="Main Navigation">
+      <ul class="nav-list">
+        {
+          navLinks.map((link) => {
+            const isActive =
+              link.href === `${baseUrl}/`
+                ? pathname === `${baseUrl}/` || pathname === `${baseUrl}`
+                : pathname.startsWith(link.href);
+            return (
+              <li>
+                <a
+                  href={link.href}
+                  class={`nav-link font-mono ${isActive ? 'active' : ''}`}
+                >
+                  <span class="nav-prefix">//</span>{link.name}
+                  {isActive && <span class="active-pip" />}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <!-- Quick Resume Button -->
+      <a
+        href={`${baseUrl}/resume`}
+        class="cyber-btn variant-green resume-header-btn"
+        title="View & Download Resume"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        <span class="font-mono text-xs">RESUME</span>
+      </a>
+
+      <!-- GitHub Link -->
+      <a
+        href="https://github.com/vadehraatharv7-hub"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="cyber-btn variant-ghost git-header-btn"
+        aria-label="GitHub Profile"
+        title="GitHub Profile"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"
+          ></path>
+          <path d="M9 18c-4.51 2-5-2-7-2"></path>
+        </svg>
+      </a>
+
+      <!-- Mobile Menu Toggle Button -->
+      <button id="mobile-menu-btn" class="mobile-toggle" aria-label="Open Navigation Menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer -->
+  <div id="mobile-drawer" class="mobile-drawer" aria-hidden="true">
+    <div class="drawer-header">
+      <span class="font-mono text-xs text-neon-cyan">[ NAV_TERMINAL ]</span>
+      <button id="close-drawer-btn" class="close-btn font-mono" aria-label="Close Menu">✕</button>
+    </div>
+    <ul class="mobile-nav-list">
+      {
+        navLinks.map((link) => (
+          <li>
+            <a href={link.href} class="mobile-nav-link font-mono">
+              <span class="text-neon-cyan">&gt;</span> {link.name}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a
+          href="https://github.com/vadehraatharv7-hub"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mobile-nav-link font-mono text-neon-green"
+        >
+          <span class="text-neon-green">&gt;</span> GITHUB PROFILE
+        </a>
+      </li>
+    </ul>
+    <div class="drawer-footer font-mono text-xs text-muted">
+      ATHARV VADEHRA &bull; PORTFOLIO<br />
+      STATUS: OPEN TO ROLES
+    </div>
+  </div>
+</header>
+
+<script>
+  // Mobile drawer interaction
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const closeBtn = document.getElementById('close-drawer-btn');
+  const drawer = document.getElementById('mobile-drawer');
+
+  if (menuBtn && drawer && closeBtn) {
+    const toggleMenu = () => {
+      const isOpen = drawer.classList.toggle('is-open');
+      drawer.setAttribute('aria-hidden', String(!isOpen));
+      document.body.classList.toggle('menu-lock');
+    };
+
+    menuBtn.addEventListener('click', toggleMenu);
+    closeBtn.addEventListener('click', toggleMenu);
+
+    // Close when clicking a link inside drawer
+    drawer.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        drawer.classList.remove('is-open');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('menu-lock');
+      });
+    });
+  }
+</script>
+
+<style>
+  .cyber-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    height: var(--nav-height);
+    background: rgba(4, 7, 17, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.18);
+    transition: border-color 0.3s ease;
+  }
+
+  .cyber-header:hover {
+    border-bottom-color: rgba(0, 240, 255, 0.35);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    gap: 1.5rem;
+  }
+
+  /* Brand / Monogram */
+  .brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+    color: var(--color-text-primary);
+    flex-shrink: 0;
+  }
+
+  .brand-icon {
+    font-family: var(--font-mono);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-neon-cyan);
+    text-shadow: var(--glow-cyan-sm);
+    display: flex;
+    align-items: center;
+    line-height: 1;
+  }
+
+  .icon-core {
+    color: var(--color-neon-green);
+    margin: 0 1px;
+    font-size: 0.95rem;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .brand-name {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #ffffff;
+    white-space: nowrap;
+  }
+
+  .brand-accent {
+    color: var(--color-neon-cyan);
+  }
+
+  .brand-sub {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  /* Desktop Navigation - Centered and Generously Spaced */
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .nav-list {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.75rem, 1.8vw, 1.75rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: nowrap;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 0.5rem;
+    border-radius: 4px;
+    position: relative;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+
+  .nav-prefix {
+    color: var(--color-neon-cyan);
+    opacity: 0.6;
+    margin-right: 0.2rem;
+  }
+
+  .nav-link:hover {
+    color: var(--color-neon-cyan);
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+  }
+
+  .nav-link.active {
+    color: #ffffff;
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+  }
+
+  .active-pip {
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 2px;
+    background: var(--color-neon-cyan);
+    box-shadow: 0 0 6px var(--color-neon-cyan);
+  }
+
+  /* Action Buttons */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-shrink: 0;
+  }
+
+  .resume-header-btn {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.75rem;
+    gap: 0.4rem;
+  }
+
+  .git-header-btn {
+    padding: 0.45rem 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Mobile menu button */
+  .mobile-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 34px;
+    height: 34px;
+    background: rgba(0, 240, 255, 0.05);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 4px;
+    padding: 7px;
+    cursor: pointer;
+  }
+
+  .mobile-toggle:hover {
+    border-color: var(--color-neon-cyan);
+  }
+
+  .mobile-toggle .bar {
+    width: 100%;
+    height: 2px;
+    background: var(--color-neon-cyan);
+    border-radius: 1px;
+    transition: 0.25s;
+  }
+
+  /* Mobile Drawer */
+  .mobile-drawer {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: min(300px, 85vw);
+    height: 100vh;
+    background: #060b18;
+    border-left: 1px solid var(--color-neon-cyan);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.85);
+    padding: 2rem 1.5rem;
+    flex-direction: column;
+    z-index: 1000;
+    transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .mobile-drawer.is-open {
+    right: 0;
+  }
+
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    margin-bottom: 2rem;
+  }
+
+  .close-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 0, 85, 0.4);
+    color: var(--color-neon-crimson);
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mobile-nav-link {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s;
+  }
+
+  .mobile-nav-link:hover {
+    color: var(--color-neon-cyan);
+    padding-left: 0.5rem;
+  }
+
+  .drawer-footer {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    line-height: 1.6;
+  }
+
+  /* Responsive Breakpoints: Switch to mobile drawer under 992px to prevent ANY crowding or overlapping */
+  @media (max-width: 992px) {
+    .desktop-nav {
+      display: none;
+    }
+    .mobile-toggle {
+      display: flex;
+    }
+    .mobile-drawer {
+      display: flex;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .brand-sub {
+      display: none;
+    }
+    .resume-header-btn span {
+      display: none;
+    }
+    .resume-header-btn {
+      padding: 0.45rem;
+    }
+  }
+</style>

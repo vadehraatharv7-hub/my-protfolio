@@ -1,0 +1,35 @@
+---
+// Decorative ambient background: a faint dot grid plus two slow-drifting teal glows.
+// Pure CSS, transform-only animation, hidden from assistive tech, off for reduced motion.
+---
+<div class="bg" aria-hidden="true">
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <div class="grid"></div>
+</div>
+
+<style>
+  .bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .grid {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(var(--grid-dot) 1px, transparent 1.2px);
+    background-size: 28px 28px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 0%, transparent 75%);
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 0%, transparent 75%);
+  }
+  .glow { position: absolute; border-radius: 50%; will-change: transform; }
+  .glow-a {
+    width: 60vmax; height: 60vmax; top: -30vmax; right: -15vmax;
+    background: radial-gradient(circle, var(--glow-1) 0%, transparent 65%);
+    animation: drift-a 48s ease-in-out infinite alternate;
+  }
+  .glow-b {
+    width: 50vmax; height: 50vmax; bottom: -28vmax; left: -18vmax;
+    background: radial-gradient(circle, var(--glow-2) 0%, transparent 65%);
+    animation: drift-b 60s ease-in-out infinite alternate;
+  }
+  @keyframes drift-a { to { transform: translate3d(-8vmax, 6vmax, 0) scale(1.08); } }
+  @keyframes drift-b { to { transform: translate3d(9vmax, -5vmax, 0) scale(1.1); } }
+  @media (prefers-reduced-motion: reduce) { .glow { animation: none; } }
+  @media print { .bg { display: none; } }
+</style>

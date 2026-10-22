@@ -1,0 +1,140 @@
+---
+// Layout.astro - Primary Anti-Gravity Cyberpunk Layout
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ParticleVoid from '../components/ParticleVoid.astro';
+import '../styles/cyber-theme.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  articleDate?: string;
+  classification?: string;
+}
+
+const {
+  title,
+  description = 'Atharv Vadehra // Cybersecurity Master’s Student at Technical University of Denmark (DTU) & DevOps Engineer. Seeking part-time student IT roles in Copenhagen (90 hrs/month).',
+  image = '/images/og-cyber.png',
+  articleDate,
+  classification = 'ATHARV VADEHRA // M.SC. CYBER SECURITY CANDIDATE @ DTU',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://vadehraatharv7-hub.github.io');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/favicon.svg`} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta Tags -->
+    <title>{title} | Atharv Vadehra</title>
+    <meta name="title" content={`${title} | Atharv Vadehra`} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={articleDate ? 'article' : 'website'} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={`${title} | Atharv Vadehra`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    {articleDate && <meta property="article:published_time" content={articleDate} />}
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={`${title} | Atharv Vadehra`} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={image} />
+
+    <!-- Fonts preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+  <body class="bg-cyber-grid">
+    <!-- Zero-gravity floating canvas background -->
+    <ParticleVoid />
+
+    <!-- Subtle CRT scanline overlay -->
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <!-- Interactive Anti-Gravity Mouse Glow Spotlight -->
+    <div id="anti-gravity-glow-cursor" class="cursor-glow" aria-hidden="true"></div>
+
+    <!-- Header Navigation -->
+    <Header />
+
+    <!-- Candidate Profile Status Bar -->
+    <div class="classification-strip">
+      <div class="container strip-inner">
+        <span class="font-mono text-xs text-neon-cyan">[ CANDIDATE PROFILE: {classification} ]</span>
+        <span class="font-mono text-xs text-neon-green desktop-only">STUDENT VISA: 90 HRS/MONTH PERMITTED &bull; COPENHAGEN</span>
+      </div>
+    </div>
+
+    <!-- Main Content Slot -->
+    <main class="main-content">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <Footer />
+
+    <!-- Anti-gravity dynamic cursor spotlight script -->
+    <script>
+      const cursorGlow = document.getElementById('anti-gravity-glow-cursor');
+      if (cursorGlow && window.matchMedia('(pointer: fine)').matches) {
+        window.addEventListener('mousemove', (e) => {
+          cursorGlow.style.transform = `translate(${e.clientX - 150}px, ${e.clientY - 150}px)`;
+        });
+      }
+    </script>
+
+    <style>
+      .classification-strip {
+        background: rgba(0, 240, 255, 0.04);
+        border-bottom: 1px solid rgba(0, 240, 255, 0.12);
+        padding: 0.35rem 0;
+        position: relative;
+        z-index: 20;
+      }
+
+      .strip-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .main-content {
+        position: relative;
+        z-index: 10;
+        flex: 1;
+      }
+
+      .cursor-glow {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(0, 240, 255, 0.07) 0%,
+          rgba(0, 255, 102, 0.03) 40%,
+          transparent 70%
+        );
+        pointer-events: none;
+        z-index: 1;
+        transition: transform 0.15s ease-out;
+        will-change: transform;
+      }
+    </style>
+  </body>
+</html>
