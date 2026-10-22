@@ -36,10 +36,7 @@ jobs:
       - name: Build static site with Astro
         run: npm run build
         env:
-          # Optional repo variables (Settings > Secrets and variables > Actions > Variables).
-          # Optional overrides; defaults in astro.config.mjs target https://atharvvadehra.dev.
-          SITE: ${{ vars.SITE }}
-          BASE_PATH: ${{ vars.BASE_PATH }}
+          # Optional repo variables for search-engine verification codes.
           PUBLIC_GOOGLE_SITE_VERIFICATION: ${{ vars.PUBLIC_GOOGLE_SITE_VERIFICATION }}
           PUBLIC_BING_SITE_VERIFICATION: ${{ vars.PUBLIC_BING_SITE_VERIFICATION }}
 
