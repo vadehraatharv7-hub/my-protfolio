@@ -1,625 +1,168 @@
 ---
-// index.astro - Atharv Vadehra Portfolio (Aligned with Official Resume)
 import Layout from '../layouts/Layout.astro';
-import FloatingTechStack from '../components/FloatingTechStack.astro';
-import CyberHudStatus from '../components/CyberHudStatus.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { getCollection } from 'astro:content';
+import PostCard from '../components/PostCard.astro';
+import { PERSON, DEFAULT_DESCRIPTION } from '../config';
+import { path, abs } from '../lib/url';
+import { getPosts, getProjects, readingMinutes } from '../lib/posts';
+import { experience, skills, talks, faq } from '../data/profile';
 
-const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
-const resumePdfUrl = `${baseUrl}/resume.pdf`;
+const projects = await getProjects();
+const posts = (await getPosts()).slice(0, 3);
 
-// Load projects and blog posts from Astro Content Collections
-const preferredOrder = [
-  'ai-soc-azure-honeypot',
-  'k8s-production-cluster',
-  'rag-vector-search',
-  'cloud-security-architecture',
+const jsonLd = [
+  {
+    '@type': 'ProfilePage',
+    '@id': abs('/') + '#profile',
+    url: abs('/'),
+    name: 'Atharv Vadehra (ARV) — portfolio',
+    mainEntity: { '@id': abs('/') + '#person' },
+    isPartOf: { '@id': abs('/') + '#website' },
+  },
+  {
+    '@type': 'FAQPage',
+    mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  },
 ];
-
-const allProjects = await getCollection('projects');
-const sortedProjects = [...allProjects].sort((a, b) => {
-  const indexA = preferredOrder.indexOf(a.id);
-  const indexB = preferredOrder.indexOf(b.id);
-  if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-  if (indexA !== -1) return -1;
-  if (indexB !== -1) return 1;
-  return 0;
-});
-const featuredProjects = sortedProjects.slice(0, 4);
-
-const allPosts = await getCollection('blog');
-const recentPosts = allPosts
-  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
-  .slice(0, 3);
 ---
 
 <Layout
-  title="Atharv Vadehra // Cybersecurity Master's Student & DevOps Engineer"
-  description="Official Portfolio of Atharv Vadehra - M.S. Cyber Security Student at Technical University of Denmark (DTU) & DevOps / Cloud Engineer."
-  classification="DTU M.SC. CYBER SECURITY CANDIDATE // COPENHAGEN"
+  rawTitle
+  type="profile"
+  title="Atharv Vadehra (ARV) — Cybersecurity & DevOps Engineer in Copenhagen"
+  description={DEFAULT_DESCRIPTION}
+  jsonLd={jsonLd}
 >
-  <!-- Real-Time Cyber Operations Telemetry Ribbon -->
-  <CyberHudStatus />
-
-  <!-- Hero Section -->
-  <section class="hero-section" id="about">
-    <div class="container hero-container">
-      <!-- Left Column: Elevator Pitch & Resume Details -->
-      <div class="hero-content">
-        <!-- Student Visa & Work Authorization Badge -->
-        <div class="visa-availability-pill font-mono levitate-slow">
-          <span class="pulse-dot-green"></span>
-          <span class="visa-loc">GREATER COPENHAGEN, DENMARK</span>
-          <span class="sep">&bull;</span>
-          <span class="visa-status text-neon-green">STUDENT VISA (90 HRS/MONTH)</span>
-          <span class="sep">&bull;</span>
-          <span class="visa-avail text-neon-amber">SEEKING STUDENTERMEDHJÆLPER ROLE</span>
-        </div>
-
-        <!-- Name & Professional Title -->
-        <h1 class="hero-name">
-          ATHARV <span class="text-neon-cyan">VADEHRA</span>
-        </h1>
-        <h2 class="hero-role font-mono text-neon-green">
-          M.S. CYBER SECURITY CANDIDATE &bull; TECHNICAL UNIVERSITY OF DENMARK (DTU)
-        </h2>
-
-        <p class="hero-pitch">
-          Cybersecurity Master’s student at DTU with strong hands-on experience in
-          <span class="text-neon-cyan">DevOps and cloud infrastructure</span>.
-          I enjoy bridging the gap between complex security architectures and smooth developer experiences.
-          Currently looking for a <span class="text-neon-green font-bold">Studentermedhjælper</span> role where I can support a team's cloud security operations,
-          automate tedious workflows, and continue learning from senior engineers in a collaborative Danish work environment.
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <p class="eyebrow">Cybersecurity · DevOps · Cloud</p>
+        <h1>Atharv Vadehra</h1>
+        <p class="alias muted">Also known as <strong>ARV</strong></p>
+        <p class="lead">
+          I’m a cybersecurity MSc student at the Technical University of Denmark (DTU) with hands-on experience in
+          DevOps and cloud infrastructure. I build secure, automated systems and write about how they work.
         </p>
-
-        <!-- Primary Portfolio Action Buttons for Recruiters -->
-        <div class="hero-action-buttons">
-          <!-- Download Official Resume PDF -->
-          <a
-            href={resumePdfUrl}
-            download="Atharv_Vadehra_Resume.pdf"
-            class="cyber-btn variant-green resume-cta"
-            title="Download PDF Resume"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <span>DOWNLOAD RESUME (PDF)</span>
-          </a>
-
-          <!-- View Digital Resume Page -->
-          <a href={`${baseUrl}/resume`} class="cyber-btn">
-            <span>VIEW RESUME ONLINE</span>
-          </a>
-
-          <a
-            href="https://www.linkedin.com/in/atharv-vadehra/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="cyber-btn variant-ghost"
-          >
-            <span>LINKEDIN</span>
-          </a>
-
-          <a
-            href="https://github.com/vadehraatharv7-hub"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="cyber-btn variant-ghost"
-          >
-            <span>GITHUB</span>
-          </a>
+        <p class="status"><span class="dot" aria-hidden="true"></span> Open to a <strong>studentermedhjælper</strong> role in Copenhagen · up to 90 hrs/month</p>
+        <div class="actions">
+          <a class="btn btn-primary" href={path('/#contact')}>Get in touch</a>
+          <a class="btn" href={path('/projects/')}>See projects</a>
+          <a class="btn" href={path('/resume.pdf')} download="Atharv_Vadehra_Resume.pdf">Download CV</a>
         </div>
       </div>
-
-      <!-- Right Column: Quick Candidate Overview Dossier Card with Headshot -->
-      <div class="candidate-dossier-card anti-gravity-card levitate-medium">
-        <div class="dossier-title-bar font-mono">
-          <div class="dossier-dots">
-            <span class="dot red"></span>
-            <span class="dot yellow"></span>
-            <span class="dot green"></span>
-          </div>
-          <span class="dossier-title text-xs text-muted">atharv_vadehra.profile</span>
-          <span class="dossier-status text-xs text-neon-green">ACTIVE</span>
-        </div>
-
-        <div class="dossier-photo-row">
-          <img
-            src={`${baseUrl}/images/atharv-vadehra.jpg`}
-            alt="Atharv Vadehra"
-            class="dossier-avatar"
-            width="80"
-            height="80"
-          />
-          <div class="dossier-id-text font-mono">
-            <div class="dossier-candidate-name text-neon-cyan">ATHARV VADEHRA</div>
-            <div class="dossier-candidate-role text-xs text-neon-green">M.Sc. Cyber Security @ DTU</div>
-            <div class="dossier-candidate-sub text-xs text-muted">📍 Greater Copenhagen, Denmark</div>
-          </div>
-        </div>
-
-        <div class="dossier-body font-mono">
-          <div class="dossier-entry">
-            <span class="dossier-key text-neon-cyan">CURRENT EDUCATION:</span>
-            <span class="dossier-val">M.Sc. Computer Science (Cyber Security)<br /><span class="text-neon-green">Technical University of Denmark (DTU)</span></span>
-          </div>
-          <div class="dossier-entry">
-            <span class="dossier-key text-neon-cyan">UNDERGRADUATE:</span>
-            <span class="dossier-val">B.Tech in Digital Transformation<br /><span class="text-muted">Atria University, Bangalore (2021 — 2025)</span></span>
-          </div>
-          <div class="dossier-entry">
-            <span class="dossier-key text-neon-cyan">LOCATION:</span>
-            <span class="dossier-val">Greater Copenhagen, Denmark</span>
-          </div>
-          <div class="dossier-entry">
-            <span class="dossier-key text-neon-cyan">TARGET ROLE:</span>
-            <span class="dossier-val text-neon-green">Studentermedhjælper (Student Visa 90 hrs/Mo)</span>
-          </div>
-          <div class="dossier-entry">
-            <span class="dossier-key text-neon-cyan">CORE STACK:</span>
-            <span class="dossier-val">Kubernetes, Terraform, Ansible, AWS, GCP, Azure, Python</span>
-          </div>
-          <div class="dossier-entry">
-            <span class="dossier-key text-neon-cyan">CONTACT DIRECT:</span>
-            <span class="dossier-val text-neon-amber">atharv@vadehra.me &bull; +45 91443342</span>
-          </div>
-        </div>
-
-        <div class="dossier-footer font-mono">
-          <a href={`${baseUrl}/resume`} class="dossier-link text-neon-cyan text-xs">
-            &gt; VIEW COMPLETE RESUME &amp; WORK HISTORY
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Floating Zero-Gravity Tech Stack Orbit -->
-    <div class="container" id="skills">
-      <FloatingTechStack />
+      <img class="portrait" src={path(PERSON.headshot)} alt="Portrait of Atharv Vadehra" width="280" height="280" fetchpriority="high" />
     </div>
   </section>
 
-  <!-- Key Impact Highlights from Resume -->
-  <section class="metrics-section">
-    <div class="container">
-      <div class="metrics-card-grid">
-        <div class="stat-box anti-gravity-card">
-          <div class="stat-number font-mono text-neon-cyan">DTU M.S.</div>
-          <div class="stat-title font-mono">CYBER SECURITY</div>
-          <p class="stat-desc">Masters in Computer Science with specialization in Cyber Security at Technical University of Denmark.</p>
-        </div>
-
-        <div class="stat-box anti-gravity-card">
-          <div class="stat-number font-mono text-neon-green stat-word-long">STUDENTER<wbr />MEDHJÆLPER</div>
-          <div class="stat-title font-mono">PART-TIME (90 HRS/MO)</div>
-          <p class="stat-desc">Seeking a student assistant position to support cloud security operations and automate workflows in a collaborative Danish environment.</p>
-        </div>
-
-        <div class="stat-box anti-gravity-card">
-          <div class="stat-number font-mono text-neon-amber">40+ AI SERVICES</div>
-          <div class="stat-title font-mono">AUTOMATED SSL &amp; GCP</div>
-          <p class="stat-desc">Automated SSL certificate lifecycle with zero downtime and architected GCP cloud security aligned with SEBI compliance requirements.</p>
-        </div>
-
-        <div class="stat-box anti-gravity-card">
-          <div class="stat-number font-mono text-neon-purple">HOMELAB CLUSTER</div>
-          <div class="stat-title font-mono">PROXMOX + k3s + GRAFANA</div>
-          <p class="stat-desc">Self-hosted environment running Proxmox, k3s, Traefik, Grafana, and NAT for dev environments and practical system administration.</p>
-        </div>
+  <section class="section" id="about">
+    <div class="container two-col">
+      <div>
+        <p class="eyebrow">About</p>
+        <h2>Security-minded engineer, built on infrastructure</h2>
+      </div>
+      <div class="about-copy">
+        <p>
+          I’m studying for an M.Sc. in Computer Science with a specialisation in cyber security at DTU (2026–), after a B.Tech in
+          Digital Transformation at Atria University in Bangalore (2021–2025).
+        </p>
+        <p>
+          Before moving to Denmark I worked on Kubernetes, AWS and GCP infrastructure at Elmet.ai and Corover AI: least-privilege
+          IAM, zero-downtime certificate automation across 40+ services, and faster, safer CI/CD. At home I run a Proxmox + k3s
+          lab and a cloud honeypot to learn how real attacks behave.
+        </p>
+        <p>
+          I’m learning Danish (beginner) and I’m fluent in English. Outside of work I enjoy strategy games and cybersecurity fiction.
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- Academic Credentials & Graduate Studies (Prominent Student Feature) -->
-  <section class="section education-section" id="education">
+  <section class="section" id="projects">
     <div class="container">
-      <div class="section-header">
-        <div>
-          <div class="section-tag font-mono text-neon-green">// ACADEMIC_CREDENTIALS</div>
-          <h2 class="section-title">EDUCATION &amp; GRADUATE STUDIES</h2>
-        </div>
-        <div class="header-badge font-mono text-xs text-neon-cyan desktop-only">
-          <span>GREATER COPENHAGEN, DENMARK &bull; STUDENT VISA (90 HRS/MO)</span>
-        </div>
+      <div class="section-head">
+        <div><p class="eyebrow">Projects</p><h2>Selected work</h2></div>
+        <a href={path('/projects/')}>All projects →</a>
       </div>
-
-      <div class="education-grid">
-        <!-- DTU -->
-        <div class="edu-card anti-gravity-card highlight-card">
-          <div class="edu-card-top font-mono">
-            <span class="edu-status-badge text-neon-green">CURRENT GRADUATE PROGRAM</span>
-            <span class="edu-dates text-xs text-neon-green">2026 — ONGOING</span>
-          </div>
-          <h3 class="edu-school font-mono">Technical University of Denmark</h3>
-          <h4 class="edu-degree font-mono text-neon-cyan">Masters in Computer Science | Specialization in Cyber Security | Copenhagen, Denmark</h4>
-          <div class="edu-location font-mono text-xs text-muted">📍 Kongens Lyngby / Copenhagen, Denmark</div>
-          <p class="edu-desc">
-            Advanced graduate study focusing on enterprise cloud security architecture, network telemetry,
-            cryptographic protocols, distributed systems hardening, and threat modeling. Actively seeking a Studentermedhjælper role in the greater Copenhagen area.
-          </p>
-          <div class="edu-tags font-mono">
-            <span class="edu-tag">Cloud &amp; Systems Security</span>
-            <span class="edu-tag">Kubernetes Hardening</span>
-            <span class="edu-tag">Network Telemetry</span>
-            <span class="edu-tag">Zero-Trust Architectures</span>
-          </div>
-        </div>
-
-        <!-- Atria -->
-        <div class="edu-card anti-gravity-card">
-          <div class="edu-card-top font-mono">
-            <span class="edu-status-badge text-muted">COMPLETED UNDERGRADUATE</span>
-            <span class="edu-dates text-xs text-muted">2021 — 2025</span>
-          </div>
-          <h3 class="edu-school font-mono">Atria University</h3>
-          <h4 class="edu-degree font-mono text-neon-cyan">Bachelors of Technology in Digital Transformation | Bangalore, India</h4>
-          <div class="edu-location font-mono text-xs text-muted">📍 Bangalore, India</div>
-          <p class="edu-desc">
-            Highly practical, project-driven curriculum with specialization in cloud, AI, and cybersecurity.
-            Hands-on work in distributed architectures, containerization, and automated CI/CD pipelines. Served as Operations Manager for Atria's first inter-college hackathon.
-          </p>
-          <div class="edu-tags font-mono">
-            <span class="edu-tag">Cloud Infrastructure</span>
-            <span class="edu-tag">DevOps &amp; CI/CD</span>
-            <span class="edu-tag">AI / Vector Retrieval</span>
-            <span class="edu-tag">Hackathon Operations</span>
-          </div>
-        </div>
+      <div class="grid">
+        {projects.slice(0, 4).map((p) => (
+          <ProjectCard slug={p.id} title={p.data.title} tagline={p.data.tagline} category={p.data.category} technologies={p.data.technologies} />
+        ))}
       </div>
     </div>
   </section>
 
-  <!-- Professional Work Experience Timeline (Exact Resume Roles) -->
-  <section class="section experience-section" id="experience">
+  <section class="section" id="writing">
     <div class="container">
-      <div class="section-header">
-        <div>
-          <div class="section-tag font-mono text-neon-cyan">// CAREER_RECORD</div>
-          <h2 class="section-title">PROFESSIONAL WORK EXPERIENCE</h2>
-        </div>
-        <a href={`${baseUrl}/resume`} class="cyber-btn variant-ghost">
-          <span>FULL RESUME VIEW =&gt;</span>
-        </a>
+      <div class="section-head">
+        <div><p class="eyebrow">Writing</p><h2>Write-ups &amp; notes</h2></div>
+        <a href={path('/blog/')}>All posts →</a>
       </div>
+      {posts.length > 0 ? (
+        <div class="narrow">{posts.map((p) => (
+          <PostCard slug={p.id} title={p.data.title} description={p.data.description} date={p.data.date} category={p.data.category} minutes={readingMinutes(p.body)} />
+        ))}</div>
+      ) : (
+        <p class="muted">Project write-ups and notes on cyber and AI news are on the way. Subscribe via <a href={path('/rss.xml')}>RSS</a>.</p>
+      )}
+    </div>
+  </section>
 
-      <div class="experience-timeline">
-        <!-- Role 1: Elmet.ai Full-Time -->
-        <div class="exp-card anti-gravity-card">
-          <div class="exp-header">
-            <div>
-              <h3 class="exp-role font-mono">ERP &amp; Python &amp; DevOps Engineer</h3>
-              <div class="exp-company text-neon-cyan font-mono">Elmet.ai | Full-Time</div>
+  <section class="section" id="experience">
+    <div class="container">
+      <div class="section-head"><div><p class="eyebrow">Experience</p><h2>Where I’ve worked</h2></div></div>
+      <ol class="timeline">
+        {experience.map((e) => (
+          <li class="card job">
+            <div class="job-head">
+              <div><h3>{e.role}</h3><p class="muted org">{e.org} · {e.kind}</p></div>
+              <span class="chip">{e.dates}</span>
             </div>
-            <div class="exp-meta font-mono">
-              <span class="exp-date">Aug 2025 — May 2026</span>
-              <span class="exp-badge text-neon-green">FULL-TIME</span>
-            </div>
-          </div>
-          <ul class="exp-bullets">
-            <li>
-              Collaborated with developers to deploy and maintain secure cloud-native infrastructure using <strong>Kubernetes, AWS, and FastAPI</strong>.
-            </li>
-            <li>
-              Supported daily team operations by actively troubleshooting Linux environment configurations and complex routing issues, ensuring continuous workflow without disruption.
-            </li>
-            <li>
-              Implemented least-privilege IAM policies, acting as a proactive security advocate within the engineering team.
-            </li>
-          </ul>
-          <div class="exp-tech-tags font-mono">
-            <span class="tech-pill">Kubernetes</span>
-            <span class="tech-pill">AWS</span>
-            <span class="tech-pill">Python</span>
-            <span class="tech-pill">FastAPI</span>
-            <span class="tech-pill">Linux Troubleshooting</span>
-            <span class="tech-pill">IAM Security</span>
-          </div>
-        </div>
+            <ul>{e.points.map((pt) => <li>{pt}</li>)}</ul>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
 
-        <!-- Role 2: Elmet.ai Intern -->
-        <div class="exp-card anti-gravity-card">
-          <div class="exp-header">
-            <div>
-              <h3 class="exp-role font-mono">ERP &amp; Python &amp; DevOps Engineer</h3>
-              <div class="exp-company text-neon-cyan font-mono">Elmet.ai | Internship</div>
-            </div>
-            <div class="exp-meta font-mono">
-              <span class="exp-date">Feb 2025 — Aug 2025</span>
-              <span class="exp-badge text-muted">INTERNSHIP</span>
-            </div>
-          </div>
-          <ul class="exp-bullets">
-            <li>
-              Collaborated with senior developers to design, implement, and enhance ERP functionality.
-            </li>
-            <li>
-              Researched, planned, and developed custom ERP modules aligned with project requirements.
-            </li>
-            <li>
-              Participated in daily stand-ups, sprint reviews, and retrospectives with cross-functional teams in India. Also, helped in hiring an intern for the team.
-            </li>
-          </ul>
-          <div class="exp-tech-tags font-mono">
-            <span class="tech-pill">Python</span>
-            <span class="tech-pill">ERP Architecture</span>
-            <span class="tech-pill">Sprint Reviews</span>
-            <span class="tech-pill">Agile</span>
-            <span class="tech-pill">Team Collaboration</span>
-          </div>
-        </div>
+  <section class="section" id="skills">
+    <div class="container">
+      <div class="section-head"><div><p class="eyebrow">Skills</p><h2>Toolbox</h2></div></div>
+      <dl class="skills">
+        {skills.map(([k, v]) => (<div class="card"><dt>{k}</dt><dd class="muted">{v}</dd></div>))}
+      </dl>
+    </div>
+  </section>
 
-        <!-- Role 3: Corover AI -->
-        <div class="exp-card anti-gravity-card">
-          <div class="exp-header">
-            <div>
-              <h3 class="exp-role font-mono">DevOps &amp; Security Architecture</h3>
-              <div class="exp-company text-neon-cyan font-mono">Corover AI | Internship</div>
-            </div>
-            <div class="exp-meta font-mono">
-              <span class="exp-date">March 2024 — August 2024</span>
-              <span class="exp-badge text-muted">INTERNSHIP</span>
-            </div>
-          </div>
-          <ul class="exp-bullets">
-            <li>
-              Worked closely with cross-functional teams to design secure cloud infrastructure on <strong>GCP</strong>, ensuring alignment with <strong>SEBI</strong> (India's securities regulator) compliance requirements.
-            </li>
-            <li>
-              Automated SSL certificate management for <strong>40+ AI services</strong>, which eliminated manual overhead and ensured zero downtime for the product team.
-            </li>
-            <li>
-              Communicated security risk analyses effectively to stakeholders, and optimized CI/CD pipelines to reduce team deployment times by <strong>70%</strong>.
-            </li>
-          </ul>
-          <div class="exp-tech-tags font-mono">
-            <span class="tech-pill">GCP</span>
-            <span class="tech-pill">SEBI Compliance</span>
-            <span class="tech-pill">SSL Automation (40+ Services)</span>
-            <span class="tech-pill">CI/CD Optimization</span>
-            <span class="tech-pill">Risk Analysis</span>
-          </div>
-        </div>
+  <section class="section">
+    <div class="container two-col">
+      <div><p class="eyebrow">Community</p><h2>Talks &amp; leadership</h2></div>
+      <ul class="plain">
+        {talks.map((t) => (<li><strong>{t.what}</strong><br /><span class="muted">{t.where} · {t.when}</span></li>))}
+        <li><strong>Operations Manager, Beyonder’s Hackathon</strong><br /><span class="muted">Atria University’s first inter-college hackathon</span></li>
+      </ul>
+    </div>
+  </section>
 
-        <!-- Role 4: Field Engineers -->
-        <div class="exp-card anti-gravity-card">
-          <div class="exp-header">
-            <div>
-              <h3 class="exp-role font-mono">Cloud Engineer</h3>
-              <div class="exp-company text-neon-cyan font-mono">Field Engineers | Internship</div>
-            </div>
-            <div class="exp-meta font-mono">
-              <span class="exp-date">Apr 2023 — Jul 2023</span>
-              <span class="exp-badge text-muted">INTERNSHIP</span>
-            </div>
-          </div>
-          <ul class="exp-bullets">
-            <li>
-              Deployed a Ghost CMS architecture on <strong>DigitalOcean</strong>, streamlining content delivery and optimizing platform SEO.
-            </li>
-          </ul>
-          <div class="exp-tech-tags font-mono">
-            <span class="tech-pill">DigitalOcean</span>
-            <span class="tech-pill">Ghost CMS</span>
-            <span class="tech-pill">Platform SEO</span>
-            <span class="tech-pill">Cloud Infrastructure</span>
-          </div>
-        </div>
+  <section class="section" id="faq">
+    <div class="container two-col">
+      <div><p class="eyebrow">FAQ</p><h2>Quick answers</h2></div>
+      <div>
+        {faq.map(([q, a]) => (<details><summary>{q}</summary><p class="muted">{a}</p></details>))}
       </div>
     </div>
   </section>
 
-  <!-- Technical Projects Showcase (Direct Resume Projects) -->
-  <section class="section projects-preview-section" id="projects">
+  <section class="section" id="contact">
     <div class="container">
-      <div class="section-header">
-        <div>
-          <div class="section-tag font-mono text-neon-cyan">// PROJECTS_EXPERIENCE</div>
-          <h2 class="section-title">ENGINEERED PROJECTS</h2>
-        </div>
-        <a href={`${baseUrl}/projects`} class="cyber-btn variant-ghost">
-          <span>VIEW ALL PROJECTS ({allProjects.length}) =&gt;</span>
-        </a>
-      </div>
-
-      <div class="projects-grid">
-        {
-          featuredProjects.map((project) => (
-            <ProjectCard
-              slug={project.id}
-              title={project.data.title}
-              tagline={project.data.tagline}
-              description={project.data.description}
-              category={project.data.category}
-              technologies={project.data.technologies}
-              github={project.data.github}
-              demo={project.data.demo}
-              status={project.data.status}
-              metrics={project.data.metrics}
-              featured={project.data.featured}
-            />
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- Technical Competencies Matrix (Grouped by Resume Structure) -->
-  <section class="section skills-section">
-    <div class="container">
-      <div class="section-header">
-        <div>
-          <div class="section-tag font-mono text-neon-green">// TECH_SKILL_MATRIX</div>
-          <h2 class="section-title">TECHNICAL COMPETENCIES &amp; LANGUAGES</h2>
-        </div>
-        <span class="font-mono text-xs text-muted desktop-only">VERIFIED FROM HANDS-ON EXPERIENCE</span>
-      </div>
-
-      <div class="skills-matrix-cards">
-        <div class="matrix-card anti-gravity-card">
-          <div class="matrix-header font-mono text-neon-cyan">
-            <span>☁️</span> CORE STACK &amp; CLOUD
-          </div>
-          <ul class="matrix-list">
-            <li><strong>Languages &amp; Shell:</strong> Python, Node.js, Bash</li>
-            <li><strong>Orchestration:</strong> Kubernetes (k3s), Docker, Microservices</li>
-            <li><strong>IaC &amp; CI/CD:</strong> Terraform, Ansible, GitHub Actions, GitLab CI</li>
-            <li><strong>Cloud Providers:</strong> AWS, GCP, Microsoft Azure, DigitalOcean</li>
-          </ul>
-        </div>
-
-        <div class="matrix-card anti-gravity-card">
-          <div class="matrix-header font-mono text-neon-green">
-            <span>📊</span> DATA &amp; OBSERVABILITY
-          </div>
-          <ul class="matrix-list">
-            <li><strong>Databases:</strong> PostgreSQL, MongoDB, Vector DBs (ChromaDB)</li>
-            <li><strong>AI / Retrieval:</strong> FAISS, High-performance embedding pipelines</li>
-            <li><strong>Log Telemetry:</strong> Grafana Loki, Promtail, Log aggregation</li>
-            <li><strong>Monitoring:</strong> Grafana, Prometheus, CloudWatch</li>
-          </ul>
-        </div>
-
-        <div class="matrix-card anti-gravity-card">
-          <div class="matrix-header font-mono text-neon-amber">
-            <span>🛡️</span> SECURITY &amp; NETWORKING
-          </div>
-          <ul class="matrix-list">
-            <li><strong>Operating Systems:</strong> Kali Linux (Bare-metal), Linux Kernels</li>
-            <li><strong>Threat Intelligence:</strong> Cowrie (Azure Honeypot), LLM Triage</li>
-            <li><strong>Packet Analysis:</strong> Wireshark, Nmap, Network scanning</li>
-            <li><strong>Network Defense:</strong> OPNsense Firewall, NAT, Least-privilege IAM</li>
-          </ul>
-        </div>
-
-        <div class="matrix-card anti-gravity-card">
-          <div class="matrix-header font-mono text-neon-purple">
-            <span>🗣️</span> LANGUAGES &amp; COLLABORATION
-          </div>
-          <ul class="matrix-list">
-            <li><strong>English:</strong> Fluent / C2 Level</li>
-            <li><strong>Danish:</strong> Beginner (Enrolled in language courses)</li>
-            <li><strong>Methodologies:</strong> Agile, daily stand-ups, sprint retrospectives</li>
-            <li><strong>Compliance:</strong> SEBI compliance, SSL certificate automation</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Extracurricular, Community & Interests Section (From Resume) -->
-  <section class="section speaking-section">
-    <div class="container">
-      <div class="section-header">
-        <div>
-          <div class="section-tag font-mono text-neon-cyan">// LEADERSHIP_&amp;_INTERESTS</div>
-          <h2 class="section-title">COMMUNITY, TALKS &amp; INTERESTS</h2>
-        </div>
-      </div>
-
-      <div class="speaking-grid">
-        <div class="speaking-card anti-gravity-card highlight-card">
-          <div class="speaking-meta font-mono text-xs text-neon-green">PERSONAL PURSUITS &bull; HOMELAB</div>
-          <h3 class="speaking-title font-mono">Interests &amp; Technical Curiosity</h3>
-          <p class="speaking-desc">
-            When not studying or maintaining a bare-metal homelab, Atharv enjoys analyzing strategy mechanics in games like Clash of Clans and exploring cybersecurity narratives in shows like Mr. Robot. Values continuous learning and sharing knowledge with the developer community.
-          </p>
-        </div>
-
-        <div class="speaking-card anti-gravity-card">
-          <div class="speaking-meta font-mono text-xs text-neon-cyan">ATRIA UNIVERSITY &bull; BANGALORE</div>
-          <h3 class="speaking-title font-mono">Operations Manager &mdash; Beyonder’s Hackathon</h3>
-          <p class="speaking-desc">
-            Organized and managed operations for Atria University's First Inter-College Tech Hackathon event,
-            coordinating multi-team schedules, infrastructure support, and judging logistics.
-          </p>
-        </div>
-
-        <div class="speaking-card anti-gravity-card">
-          <div class="speaking-meta font-mono text-xs text-neon-green">KONNECT AI @ MICROSOFT &bull; JAN 2023</div>
-          <h3 class="speaking-title font-mono">Public Talk: MLOps and Security Infrastructure</h3>
-          <p class="speaking-desc">
-            Delivered technical presentation at Microsoft Bangalore on hardening machine learning pipelines,
-            model serving security, and automated cloud infrastructure.
-          </p>
-        </div>
-
-        <div class="speaking-card anti-gravity-card">
-          <div class="speaking-meta font-mono text-xs text-neon-amber">KONNECT AI @ GOOGLE &bull; FEB 2024</div>
-          <h3 class="speaking-title font-mono">Public Talk: DevOps vs MLOps</h3>
-          <p class="speaking-desc">
-            Presented at Google Gurugram exploring architectural divergences between traditional software DevOps
-            and machine learning lifecycle pipelines.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Recruiter & Hiring Contact CTA Section -->
-  <section class="section contact-section" id="contact">
-    <div class="container">
-      <div class="contact-box anti-gravity-card">
-        <div class="contact-content">
-          <div class="contact-tag font-mono text-neon-cyan">[ CONNECT_PROTOCOL ]</div>
-          <h2 class="contact-heading">LET'S CONNECT IN GREATER COPENHAGEN OR REMOTELY</h2>
-          <p class="contact-sub">
-            Seeking a <strong>Studentermedhjælper</strong> role in Denmark (permitted up to 90 hrs/month on Student Visa).
-            Ready to support cloud security operations, automate workflows, and collaborate with senior engineering teams.
-          </p>
-
-          <div class="contact-vectors font-mono">
-            <div class="vector-item">
-              <span class="vector-label text-muted">EMAIL:</span>
-              <a href="mailto:atharv@vadehra.me" class="vector-link text-neon-cyan">atharv@vadehra.me</a>
-            </div>
-            <div class="vector-item">
-              <span class="vector-label text-muted">PHONE:</span>
-              <span class="vector-link text-neon-green">+45 91443342</span>
-            </div>
-            <div class="vector-item">
-              <span class="vector-label text-muted">LOCATION:</span>
-              <span class="vector-link">Greater Copenhagen, Denmark</span>
-            </div>
-            <div class="vector-item">
-              <span class="vector-label text-muted">LINKEDIN:</span>
-              <a href="https://www.linkedin.com/in/atharv-vadehra/" target="_blank" rel="noopener noreferrer" class="vector-link text-neon-cyan">
-                linkedin.com/in/atharv-vadehra
-              </a>
-            </div>
-            <div class="vector-item">
-              <span class="vector-label text-muted">GITHUB:</span>
-              <a href="https://github.com/vadehraatharv7-hub" target="_blank" rel="noopener noreferrer" class="vector-link text-neon-cyan">
-                github.com/vadehraatharv7-hub
-              </a>
-            </div>
-          </div>
-
-          <div class="contact-actions">
-            <a
-              href={resumePdfUrl}
-              download="Atharv_Vadehra_Resume.pdf"
-              class="cyber-btn variant-green"
-            >
-              <span>DOWNLOAD RESUME (PDF)</span>
-            </a>
-            <a href="mailto:atharv@vadehra.me" class="cyber-btn">
-              <span>SEND DIRECT EMAIL</span>
-            </a>
-          </div>
+      <div class="card contact">
+        <h2>Let’s talk</h2>
+        <p class="muted">
+          I’m looking for a part-time studentermedhjælper role in Greater Copenhagen (cloud, DevOps or security) and I’m happy to chat about projects or collaborations.
+        </p>
+        <div class="actions">
+          <a class="btn btn-primary" href={`mailto:${PERSON.email}`}>{PERSON.email}</a>
+          <a class="btn" href={PERSON.linkedin} target="_blank" rel="me noopener">LinkedIn</a>
+          <a class="btn" href={PERSON.github} target="_blank" rel="me noopener">GitHub</a>
         </div>
       </div>
     </div>
@@ -627,593 +170,33 @@ const recentPosts = allPosts
 </Layout>
 
 <style>
-  /* Hero Section */
-  .hero-section {
-    padding: 3.5rem 0 2rem 0;
-    position: relative;
-  }
-
-  .hero-container {
-    display: grid;
-    grid-template-columns: 1.3fr 1fr;
-    gap: 3rem;
-    align-items: center;
-    margin-bottom: 2rem;
-  }
-
-  .visa-availability-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.4rem 0.85rem;
-    background: rgba(0, 255, 102, 0.08);
-    border: 1px solid rgba(0, 255, 102, 0.35);
-    border-radius: 4px;
-    font-size: 0.76rem;
-    margin-bottom: 1.25rem;
-    flex-wrap: wrap;
-  }
-
-  .pulse-dot-green {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--color-neon-green);
-    box-shadow: 0 0 8px var(--color-neon-green);
-    animation: pulse-neon 1.8s infinite;
-  }
-
-  .visa-loc {
-    color: #ffffff;
-    font-weight: 600;
-  }
-
-  .sep {
-    color: var(--color-text-muted);
-  }
-
-  .hero-name {
-    font-size: clamp(2.4rem, 5vw, 3.8rem);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: #ffffff;
-    margin-bottom: 0.6rem;
-  }
-
-  .hero-role {
-    font-size: clamp(0.9rem, 1.6vw, 1.05rem);
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    margin-bottom: 1.5rem;
-  }
-
-  .hero-pitch {
-    font-size: 1.06rem;
-    line-height: 1.7;
-    color: var(--color-text-secondary);
-    margin-bottom: 2.25rem;
-    max-width: 620px;
-  }
-
-  .hero-action-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.85rem;
-  }
-
-  .resume-cta {
-    font-weight: 700;
-  }
-
-  /* Candidate Dossier Card */
-  .candidate-dossier-card {
-    background: rgba(6, 12, 28, 0.92);
-    border: 1px solid rgba(0, 240, 255, 0.3);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-  }
-
-  .dossier-title-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.65rem 1rem;
-    background: rgba(2, 5, 12, 0.95);
-    border-bottom: 1px solid rgba(0, 240, 255, 0.15);
-  }
-
-  .dossier-dots {
-    display: flex;
-    gap: 0.4rem;
-  }
-
-  .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-  }
-  .dot.red { background: #ff5f56; }
-  .dot.yellow { background: #ffbd2e; }
-  .dot.green { background: #27c93f; }
-
-  .dossier-photo-row {
-    display: flex;
-    align-items: center;
-    gap: 1.15rem;
-    padding: 1.15rem 1.5rem 0.5rem 1.5rem;
-    border-bottom: 1px dashed rgba(0, 240, 255, 0.18);
-  }
-
-  .dossier-avatar {
-    width: 76px;
-    height: 76px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--color-neon-cyan);
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.35);
-  }
-
-  .dossier-id-text {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .dossier-candidate-name {
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-  }
-
-  .dossier-body {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    font-size: 0.82rem;
-  }
-
-  .dossier-entry {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.08);
-  }
-
-  .dossier-entry:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-
-  .dossier-key {
-    font-size: 0.68rem;
-    letter-spacing: 0.05em;
-  }
-
-  .dossier-val {
-    color: #ffffff;
-    line-height: 1.4;
-  }
-
-  .dossier-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    padding: 0.75rem 1.25rem;
-    background: rgba(3, 7, 18, 0.8);
-    border-top: 1px solid rgba(0, 240, 255, 0.15);
-  }
-
-  .dossier-link {
-    text-decoration: none;
-  }
-
-  .dossier-link:hover {
-    text-decoration: underline;
-  }
-
-  /* Metrics Section */
-  .metrics-section {
-    padding: 2rem 0;
-  }
-
-  .metrics-card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.25rem;
-  }
-
-  .stat-box {
-    padding: 1.5rem;
-    border: 1px solid rgba(0, 240, 255, 0.18);
-    min-width: 0;
-    overflow: hidden;
-  }
-
-  .stat-number {
-    font-size: 1.45rem;
-    font-weight: 700;
-    margin-bottom: 0.35rem;
-    line-height: 1.25;
-    overflow-wrap: break-word;
-    word-break: break-word;
-  }
-
-  .stat-number.stat-word-long {
-    font-size: clamp(0.92rem, 1.25vw, 1.15rem);
-    letter-spacing: -0.01em;
-    line-height: 1.25;
-  }
-
-  .stat-title {
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    color: var(--color-text-primary);
-    margin-bottom: 0.5rem;
-  }
-
-  .stat-desc {
-    font-size: 0.82rem;
-    color: var(--color-text-secondary);
-    line-height: 1.5;
-  }
-
-  /* Shared Section Headers */
-  .section {
-    padding: 4.5rem 0;
-  }
-
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(0, 240, 255, 0.15);
-  }
-
-  .section-tag {
-    font-size: 0.82rem;
-    letter-spacing: 0.1em;
-    margin-bottom: 0.5rem;
-  }
-
-  .section-title {
-    font-family: var(--font-mono);
-    font-size: clamp(1.6rem, 3vw, 2.2rem);
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: -0.01em;
-  }
-
-  /* Experience Timeline */
-  .experience-timeline {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  .exp-card {
-    padding: 2.25rem;
-    border: 1px solid rgba(0, 240, 255, 0.22);
-    background: rgba(8, 14, 30, 0.85);
-  }
-
-  .exp-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1.25rem;
-    padding-bottom: 0.85rem;
-    border-bottom: 1px dashed rgba(0, 240, 255, 0.18);
-  }
-
-  .exp-role {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 0.25rem;
-  }
-
-  .exp-company {
-    font-size: 0.92rem;
-  }
-
-  .exp-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: 0.8rem;
-  }
-
-  .exp-badge {
-    padding: 0.15rem 0.5rem;
-    background: rgba(0, 255, 102, 0.1);
-    border: 1px solid rgba(0, 255, 102, 0.3);
-    border-radius: 3px;
-    font-size: 0.7rem;
-  }
-
-  .exp-bullets {
-    padding-left: 1.25rem;
-    margin-bottom: 1.5rem;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: var(--color-text-secondary);
-  }
-
-  .exp-bullets li {
-    margin-bottom: 0.5rem;
-  }
-
-  .exp-bullets li::marker {
-    color: var(--color-neon-cyan);
-  }
-
-  .exp-bullets strong {
-    color: var(--color-text-primary);
-  }
-
-  .exp-tech-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .tech-pill {
-    font-size: 0.72rem;
-    color: var(--color-neon-cyan);
-    background: rgba(0, 240, 255, 0.08);
-    border: 1px solid rgba(0, 240, 255, 0.2);
-    padding: 0.2rem 0.6rem;
-    border-radius: 4px;
-  }
-
-  /* Projects Grid */
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.75rem;
-  }
-
-  /* Skills Matrix Cards */
-  .skills-matrix-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .matrix-card {
-    padding: 1.75rem;
-    background: rgba(8, 14, 30, 0.8);
-    border: 1px solid rgba(0, 240, 255, 0.18);
-  }
-
-  .matrix-header {
-    font-size: 0.92rem;
-    font-weight: 700;
-    margin-bottom: 1.25rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px dashed rgba(0, 240, 255, 0.2);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .matrix-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    font-size: 0.88rem;
-    line-height: 1.5;
-    color: var(--color-text-secondary);
-  }
-
-  .matrix-list strong {
-    color: var(--color-text-primary);
-  }
-
-  /* Speaking & Leadership */
-  .speaking-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .speaking-card {
-    padding: 1.75rem;
-    background: rgba(8, 14, 30, 0.8);
-    border: 1px solid rgba(0, 240, 255, 0.18);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .speaking-meta {
-    margin-bottom: 0.6rem;
-  }
-
-  .speaking-title {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 0.75rem;
-  }
-
-  .speaking-desc {
-    font-size: 0.88rem;
-    line-height: 1.6;
-    color: var(--color-text-secondary);
-  }
-
-  /* Education */
-  .education-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.75rem;
-  }
-
-  .edu-card {
-    padding: 2.25rem;
-    background: rgba(8, 14, 30, 0.85);
-    border: 1px solid rgba(0, 240, 255, 0.2);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .highlight-card {
-    border-color: rgba(0, 255, 102, 0.35);
-    background: rgba(7, 18, 28, 0.9);
-    box-shadow: 0 0 25px rgba(0, 255, 102, 0.08);
-  }
-
-  .edu-card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 0.85rem;
-  }
-
-  .edu-status-badge {
-    font-size: 0.72rem;
-    padding: 0.2rem 0.55rem;
-    border-radius: 3px;
-    background: rgba(0, 255, 102, 0.08);
-    border: 1px solid rgba(0, 255, 102, 0.28);
-  }
-
-  .edu-dates {
-    margin-bottom: 0;
-  }
-
-  .edu-school {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 0.35rem;
-  }
-
-  .edu-degree {
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .edu-location {
-    margin-bottom: 0.85rem;
-  }
-
-  .edu-desc {
-    font-size: 0.9rem;
-    line-height: 1.65;
-    color: var(--color-text-secondary);
-    margin-bottom: 1.25rem;
-    flex-grow: 1;
-  }
-
-  .edu-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-  }
-
-  .edu-tag {
-    font-size: 0.72rem;
-    color: var(--color-neon-cyan);
-    background: rgba(0, 240, 255, 0.08);
-    border: 1px solid rgba(0, 240, 255, 0.2);
-    padding: 0.2rem 0.55rem;
-    border-radius: 3px;
-  }
-
-  /* Contact Section */
-  .contact-box {
-    padding: 3.5rem;
-    background: rgba(6, 12, 28, 0.9);
-    border: 1px solid rgba(0, 240, 255, 0.3);
-    text-align: center;
-  }
-
-  .contact-content {
-    max-width: 720px;
-    margin: 0 auto;
-  }
-
-  .contact-tag {
-    font-size: 0.82rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .contact-heading {
-    font-family: var(--font-mono);
-    font-size: clamp(1.8rem, 3.5vw, 2.4rem);
-    font-weight: 700;
-    color: #ffffff;
-    line-height: 1.25;
-    margin-bottom: 1.25rem;
-  }
-
-  .contact-sub {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: var(--color-text-secondary);
-    margin-bottom: 2.25rem;
-  }
-
-  .contact-vectors {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    background: rgba(4, 7, 17, 0.6);
-    border: 1px solid rgba(0, 240, 255, 0.15);
-    border-radius: 6px;
-    padding: 1.25rem;
-    margin-bottom: 2.25rem;
-    font-size: 0.88rem;
-    text-align: left;
-  }
-
-  .vector-item {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-
-  .vector-label {
-    min-width: 90px;
-  }
-
-  .vector-link {
-    text-decoration: none;
-  }
-
-  .vector-link:hover {
-    text-decoration: underline;
-  }
-
-  .contact-actions {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  @media (max-width: 968px) {
-    .hero-container {
-      grid-template-columns: 1fr;
-      gap: 2.5rem;
-    }
-    .contact-box {
-      padding: 2.5rem 1.5rem;
-    }
+  .hero { padding: 72px 0 56px; }
+  .hero-grid { display: grid; grid-template-columns: 1fr auto; gap: 48px; align-items: center; }
+  .alias { margin: -4px 0 20px; }
+  .lead { font-size: 1.2rem; max-width: 620px; color: var(--text-muted); }
+  .status { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; background: var(--bg-sunken); border: 1px solid var(--border); border-radius: 999px; font-size: 0.92rem; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.2); flex: none; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+  .portrait { width: 280px; height: 280px; object-fit: cover; border-radius: 24px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .two-col { display: grid; grid-template-columns: 1fr 2fr; gap: 48px; }
+  .about-copy p { color: var(--text-muted); }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .narrow { max-width: 760px; }
+  .timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
+  .job-head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+  .job h3 { margin: 0; } .org { margin: 2px 0 0; }
+  .job ul { margin: 12px 0 0; padding-left: 1.2em; color: var(--text-muted); } .job li { margin-bottom: 6px; }
+  .skills { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 0; }
+  dt { font-weight: 650; margin-bottom: 6px; } dd { margin: 0; font-size: 0.97rem; }
+  .plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 18px; }
+  details { border-bottom: 1px solid var(--border); padding: 14px 0; }
+  summary { cursor: pointer; font-weight: 600; } details p { margin: 10px 0 0; }
+  .contact { text-align: center; padding: 48px 24px; }
+  .contact p { max-width: 560px; margin: 0 auto; } .contact .actions { justify-content: center; }
+  @media (max-width: 800px) {
+    .hero-grid, .two-col { grid-template-columns: 1fr; gap: 28px; }
+    .portrait { order: -1; width: 120px; height: 120px; border-radius: 20px; }
+    .grid, .skills { grid-template-columns: 1fr; }
+    .hero { padding-top: 40px; }
   }
 </style>

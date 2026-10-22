@@ -12,19 +12,12 @@ technologies:
   - "Docker"
   - "Embeddings"
 github: "https://github.com/vadehraatharv7-hub"
-demo: "https://vadehraatharv7-hub.github.io/my-protfolio/"
-featured: true
-status: "PRODUCTION OPERATIONAL"
-metrics:
-  Vector Index: "FAISS HNSW"
-  Vector Store: "ChromaDB"
-  Document DB: "MongoDB"
-  Query Latency: "< 45 ms"
+order: 3
 ---
 
-## 0x01 // Architectural Overview
+## Architectural Overview
 
-Large Language Models (LLMs) suffer from hallucinations when queried about proprietary knowledge or changing internal documentation. This project implements a production-grade **Retrieval-Augmented Generation (RAG)** pipeline that indexes enterprise knowledge and fetches semantically accurate contexts in under 45ms.
+Large Language Models (LLMs) suffer from hallucinations when queried about proprietary knowledge or changing internal documentation. This project implements a production-grade **Retrieval-Augmented Generation (RAG)** pipeline that indexes enterprise knowledge and retrieves semantically relevant context for an LLM at query time.
 
 ```text
 [ Raw PDF / Docs ] ──► [ Text Splitter & Chunking ] ──► [ Embedding Generator ]
@@ -43,7 +36,7 @@ Large Language Models (LLMs) suffer from hallucinations when queried about propr
 
 ---
 
-## 0x02 // Core Ingestion & Retrieval Pipeline
+## Core Ingestion & Retrieval Pipeline
 
 1. **Document Ingestion & Chunking**: Recursive character splitting with dynamic overlap (500 tokens chunk / 50 tokens overlap) to preserve semantic continuity across sentences.
 2. **FAISS Vector Indexing**: Utilizes `IndexHNSWFlat` for approximate nearest neighbor vector similarity, optimizing high-dimensional Euclidean distance calculations.
@@ -77,7 +70,7 @@ async def retrieve_context(query_embedding: list[float], top_k: int = 5):
 
 ---
 
-## 0x03 // Production Deployment & Security
+## Production Deployment & Security
 
 - Packaged into multi-stage **Docker** images ensuring minimal attack surface.
 - Hardened API endpoints with API key verification, rate limiting, and input sanitization to prevent prompt injection vectors.

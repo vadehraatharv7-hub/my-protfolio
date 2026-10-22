@@ -1,59 +1,93 @@
 ---
-// blog/[...slug].astro - Dynamic Routing & Parsing Template for Markdown Posts (Astro 5)
-import { getCollection, render, type CollectionEntry } from 'astro:content';
-import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
+import { render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { getPosts, readingMinutes } from '../../lib/posts';
+import { CATEGORIES, PERSON } from '../../config';
+import { path, abs } from '../../lib/url';
+import { breadcrumbLd } from '../../lib/schema';
 
-// Statically generate all routes for GitHub Pages deployment
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
-}
-
-interface Props {
-  post: CollectionEntry<'blog'>;
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
 }
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+const d = post.data;
+const minutes = readingMinutes(post.body);
+const url = abs(`/blog/${post.id}/`);
+const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const image = d.cover ?? '/og-default.png';
 
-/**
- * Exact parsing logic for requested YAML frontmatter schema:
- * - title: Post heading
- * - subtitle: Post overview
- * - date: Publication timestamp (YYYY-MM-DD)
- * - time: Reading duration / time
- * - header_image: Main post artwork path or URL
- * - author: Name with default fallback to 'Atharv Vadehra'
- * - sources: Array of references or links
- * - classification: Optional classified security clearance badge
- * - tags: Optional topic keywords
- */
-const {
-  title,
-  subtitle,
-  date,
-  time,
-  header_image,
-  author = 'Atharv Vadehra',
-  sources = [],
-  classification,
-  tags,
-} = post.data;
+const jsonLd = [
+  breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Writing', path: '/blog/' }, { name: d.title }]),
+  {
+    '@type': 'BlogPosting',
+    '@id': url + '#post',
+    mainEntityOfPage: url,
+    headline: d.title,
+    description: d.description,
+    image: abs(image),
+    datePublished: d.date.toISOString(),
+    dateModified: (d.updated ?? d.date).toISOString(),
+    author: { '@id': abs('/') + '#person' },
+    publisher: { '@id': abs('/') + '#person' },
+    keywords: d.tags.join(', '),
+    articleSection: CATEGORIES[d.category].label,
+    inLanguage: 'en',
+    wordCount: post.body?.split(/\s+/).length,
+    citation: d.sources.map((s) => ({ '@type': 'CreativeWork', name: s.title, url: s.url })),
+  },
+];
 ---
 
-<BlogPostLayout
-  title={title}
-  subtitle={subtitle}
-  date={date}
-  time={time}
-  header_image={header_image}
-  author={author}
-  sources={sources}
-  classification={classification}
-  tags={tags}
+<Layout
+  title={d.title}
+  description={d.description}
+  image={image}
+  type="article"
+  publishedTime={d.date}
+  modifiedTime={d.updated ?? d.date}
+  tags={d.tags}
+  jsonLd={jsonLd}
 >
-  <Content />
-</BlogPostLayout>
+  <article class="container wrap">
+    <Breadcrumbs items={[{ name: 'Home', href: path('/') }, { name: 'Writing', href: path('/blog/') }, { name: CATEGORIES[d.category].label }]} />
+    <header class="prose head">
+      <p class="eyebrow">{CATEGORIES[d.category].label}</p>
+      <h1>{d.title}</h1>
+      <p class="lead muted">{d.description}</p>
+      <p class="meta faint mono">
+        By <a href={path('/')}>{PERSON.name}</a> ·
+        <time datetime={d.date.toISOString()}>{fmt.format(d.date)}</time>
+        {d.updated && <> · updated <time datetime={d.updated.toISOString()}>{fmt.format(d.updated)}</time></>}
+        · {minutes} min read
+      </p>
+    </header>
+    <div class="prose"><Content /></div>
+
+    {d.sources.length > 0 && (
+      <section class="prose sources">
+        <h2>Sources</h2>
+        <ol>{d.sources.map((s) => <li><a href={s.url} rel="noopener" target="_blank">{s.title}</a></li>)}</ol>
+      </section>
+    )}
+
+    {d.tags.length > 0 && <div class="prose chips tags">{d.tags.map((t) => <span class="chip">{t}</span>)}</div>}
+
+    <aside class="prose author card">
+      <strong>{PERSON.name}</strong> <span class="faint">(ARV)</span>
+      <p class="muted">Cybersecurity MSc student at DTU and DevOps &amp; cloud engineer. <a href={path('/')}>More about me</a> · <a href={path('/rss.xml')}>Subscribe via RSS</a></p>
+    </aside>
+  </article>
+</Layout>
+
+<style>
+  .wrap { padding-top: 48px; padding-bottom: 32px; }
+  .head h1 { font-size: clamp(2rem, 4.5vw, 2.8rem); }
+  .lead { font-size: 1.15rem; } .meta { font-size: 0.85rem; }
+  .sources { margin-top: 40px; font-size: 0.95rem; } .sources li { word-break: break-word; }
+  .tags { margin-top: 32px; }
+  .author { margin-top: 48px; } .author p { margin: 6px 0 0; }
+</style>

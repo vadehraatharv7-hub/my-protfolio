@@ -1,18 +1,19 @@
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 
-// https://astro.build/config
+// Deployed to GitHub Pages. To move to a custom domain (e.g. https://vadehra.me)
+// set the repo variables SITE=https://vadehra.me and BASE_PATH=/ and add public/CNAME.
+const site = process.env.SITE || 'https://vadehraatharv7-hub.github.io';
+const base = process.env.BASE_PATH || '/my-protfolio/';
+
 export default defineConfig({
-  // GitHub Pages configuration for vadehraatharv7-hub/my-protfolio
-  site: process.env.SITE || 'https://vadehraatharv7-hub.github.io',
-  base: process.env.BASE_PATH || '/my-protfolio/',
+  site,
+  base,
   output: 'static',
-  build: {
-    format: 'directory',
-  },
+  trailingSlash: 'always',
+  build: { format: 'directory' },
+  integrations: [sitemap()],
   markdown: {
-    shikiConfig: {
-      theme: 'github-dark',
-      wrap: true,
-    },
+    shikiConfig: { themes: { light: 'github-light', dark: 'github-dark' }, wrap: true },
   },
 });

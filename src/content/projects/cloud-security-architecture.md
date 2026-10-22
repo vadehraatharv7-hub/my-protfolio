@@ -13,17 +13,10 @@ technologies:
   - "IAM"
   - "Python"
 github: "https://github.com/vadehraatharv7-hub"
-demo: "https://vadehraatharv7-hub.github.io/my-protfolio/"
-featured: true
-status: "PRODUCTION OPERATIONAL"
-metrics:
-  AI Services: "40+ Hardened"
-  CI/CD Speedup: "70% Faster"
-  Compliance: "SEBI Aligned"
-  Downtime: "0 SSL Outages"
+order: 4
 ---
 
-## 0x01 // Project Context & Enterprise Scope
+## Project Context & Enterprise Scope
 
 Operating enterprise-scale conversational AI applications demands rock-solid uptime, strict cryptographic transport encryption, and adherence to rigorous regulatory standards (such as **SEBI - Securities and Exchange Board of India** guidelines).
 
@@ -43,7 +36,7 @@ Operating enterprise-scale conversational AI applications demands rock-solid upt
 
 ---
 
-## 0x02 // Technical Accomplishments & Security Hardening
+## Technical Accomplishments & Security Hardening
 
 1. **Automated SSL Lifecycle Management for 40+ AI Services**:
    - Designed automated DNS-01 and HTTP-01 certificate renewal bots, eliminating manual certificate rotations and avoiding zero-day expiration downtime across all production subdomains.
@@ -58,6 +51,6 @@ Operating enterprise-scale conversational AI applications demands rock-solid upt
 
 ---
 
-## 0x03 // Cost-Security Tradeoff Analysis
+## Cost-Security Tradeoff Analysis
 
 Conducted cross-cloud architectural evaluations across AWS, GCP, and DigitalOcean, identifying over-provisioned compute and idle ingress gateways to achieve significant cloud cost reductions without compromising security posture.

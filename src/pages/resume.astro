@@ -1,670 +1,94 @@
 ---
-// resume.astro - Official Digital Resume of Atharv Vadehra
 import Layout from '../layouts/Layout.astro';
-
-const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
-const resumePdfUrl = `${baseUrl}/resume.pdf`;
+import { PERSON } from '../config';
+import { path, abs } from '../lib/url';
+import { experience, skills, education } from '../data/profile';
+import { breadcrumbLd } from '../lib/schema';
 ---
 
 <Layout
-  title="Atharv Vadehra // Official Resume"
-  description="Official Resume of Atharv Vadehra - Cybersecurity Master's Student at Technical University of Denmark (DTU) & DevOps / Cloud Engineer."
-  classification="OFFICIAL RESUME // COPENHAGEN, DENMARK"
+  title="Resume"
+  description="Resume of Atharv Vadehra (ARV): cybersecurity MSc student at DTU with DevOps, cloud and security engineering experience."
+  jsonLd={[breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Resume' }])]}
 >
-  <div class="resume-page">
-    <div class="container resume-container">
-      <!-- Toolbar for Recruiters & Hiring Managers -->
-      <div class="resume-toolbar no-print">
-        <div class="toolbar-left font-mono">
-          <a href={`${baseUrl}/`} class="back-link">
-            <span class="text-neon-cyan">&lt;==</span> RETURN TO PORTFOLIO
-          </a>
-        </div>
-        <div class="toolbar-right">
-          <!-- Download Original PDF button -->
-          <a
-            href={resumePdfUrl}
-            download="Atharv_Vadehra_Resume.pdf"
-            class="cyber-btn variant-green"
-            title="Download PDF Resume"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <span>DOWNLOAD RESUME (PDF)</span>
-          </a>
-
-          <!-- Print / Save button -->
-          <button id="print-resume-btn" class="cyber-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <polyline points="6 9 6 2 18 2 18 9"></polyline>
-              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-              <rect x="6" y="14" width="12" height="8"></rect>
-            </svg>
-            <span>PRINT / SAVE</span>
-          </button>
-
-          <a
-            href="https://www.linkedin.com/in/atharv-vadehra/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="cyber-btn variant-ghost"
-          >
-            <span>LINKEDIN</span>
-          </a>
-
-          <a
-            href="https://github.com/vadehraatharv7-hub"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="cyber-btn variant-ghost"
-          >
-            <span>GITHUB</span>
-          </a>
-        </div>
+  <div class="container wrap">
+    <div class="toolbar no-print">
+      <a href={path('/')}>← Back to portfolio</a>
+      <div class="actions">
+        <a class="btn btn-primary" href={path('/resume.pdf')} download="Atharv_Vadehra_Resume.pdf">Download PDF</a>
+        <button class="btn" id="print">Print</button>
       </div>
-
-      <!-- Main Printable Resume Document -->
-      <main class="resume-sheet anti-gravity-card" id="printable-resume">
-        <!-- Header -->
-        <header class="resume-header">
-          <div class="header-main">
-            <h1 class="candidate-name">Atharv Vadehra</h1>
-            <div class="contact-subline font-mono">
-              <span>Greater Copenhagen, Denmark</span>
-              <span class="sep">&bull;</span>
-              <a href="mailto:atharv@vadehra.me" class="contact-link">atharv@vadehra.me</a>
-              <span class="sep">&bull;</span>
-              <span>+45 91443342</span>
-              <span class="sep">&bull;</span>
-              <a href="https://github.com/vadehraatharv7-hub" target="_blank" class="contact-link">GitHub</a>
-              <span class="sep">&bull;</span>
-              <a href="https://www.linkedin.com/in/atharv-vadehra/" target="_blank" class="contact-link">LinkedIn</a>
-            </div>
-            <div class="visa-badge font-mono">
-              <span class="text-neon-green font-bold">WORK PERMIT:</span> Student (90 hrs/Month) &bull; Seeking Studentermedhjælper Role
-            </div>
-          </div>
-        </header>
-
-        <!-- Professional Summary -->
-        <section class="resume-section">
-          <h2 class="section-heading font-mono">SUMMARY</h2>
-          <p class="summary-text">
-            Cybersecurity Master’s student at DTU with strong hands-on experience in DevOps and cloud infrastructure.
-            I enjoy bridging the gap between complex security architectures and smooth developer experiences.
-            Currently looking for a <strong>Studentermedhjælper</strong> role where I can support a team's cloud security operations,
-            automate tedious workflows, and continue learning from senior engineers in a collaborative Danish work environment.
-          </p>
-        </section>
-
-        <!-- Education -->
-        <section class="resume-section">
-          <h2 class="section-heading font-mono">EDUCATION</h2>
-          <div class="timeline-items">
-            <!-- Master's -->
-            <div class="timeline-item">
-              <div class="timeline-row">
-                <div class="school-col">
-                  <h3 class="school-name">Technical University of Denmark</h3>
-                  <div class="degree-name text-neon-cyan font-mono">Masters in Computer Science | Specialization in Cyber Security | Copenhagen, Denmark</div>
-                </div>
-                <div class="date-col font-mono text-neon-green">
-                  2026 — Ongoing
-                </div>
-              </div>
-            </div>
-
-            <!-- Bachelor's -->
-            <div class="timeline-item">
-              <div class="timeline-row">
-                <div class="school-col">
-                  <h3 class="school-name">Atria University</h3>
-                  <div class="degree-name text-neon-cyan font-mono">Bachelors of Technology in Digital Transformation | Bangalore, India</div>
-                </div>
-                <div class="date-col font-mono text-muted">
-                  2021 — 2025
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Experience -->
-        <section class="resume-section">
-          <h2 class="section-heading font-mono">EXPERIENCE</h2>
-          <div class="timeline-items">
-            <!-- Role 1 -->
-            <div class="timeline-item">
-              <div class="timeline-row">
-                <div class="role-col">
-                  <h3 class="job-title">ERP &amp; Python &amp; DevOps Engineer</h3>
-                  <div class="company-name text-neon-cyan font-mono">Elmet.ai | Full-Time</div>
-                </div>
-                <div class="date-col font-mono text-muted">
-                  Aug 2025 — May 2026
-                </div>
-              </div>
-              <ul class="bullet-list">
-                <li>Collaborated with developers to deploy and maintain secure cloud-native infrastructure using <strong>Kubernetes, AWS, and FastAPI</strong>.</li>
-                <li>Supported daily team operations by actively troubleshooting Linux environment configurations and complex routing issues, ensuring continuous workflow without disruption.</li>
-                <li>Implemented least-privilege IAM policies, acting as a proactive security advocate within the engineering team.</li>
-              </ul>
-            </div>
-
-            <!-- Role 2 -->
-            <div class="timeline-item">
-              <div class="timeline-row">
-                <div class="role-col">
-                  <h3 class="job-title">ERP &amp; Python &amp; DevOps Engineer</h3>
-                  <div class="company-name text-neon-cyan font-mono">Elmet.ai | Internship</div>
-                </div>
-                <div class="date-col font-mono text-muted">
-                  Feb 2025 — Aug 2025
-                </div>
-              </div>
-              <ul class="bullet-list">
-                <li>Collaborated with senior developers to design, implement, and enhance ERP functionality.</li>
-                <li>Researched, planned, and developed custom ERP modules aligned with project requirements.</li>
-                <li>Participated in daily stand-ups, sprint reviews, and retrospectives with cross-functional teams in India. Also, helped in hiring an intern for the team.</li>
-              </ul>
-            </div>
-
-            <!-- Role 3 -->
-            <div class="timeline-item">
-              <div class="timeline-row">
-                <div class="role-col">
-                  <h3 class="job-title">DevOps &amp; Security Architecture</h3>
-                  <div class="company-name text-neon-cyan font-mono">Corover AI | Internship</div>
-                </div>
-                <div class="date-col font-mono text-muted">
-                  March 2024 — August 2024
-                </div>
-              </div>
-              <ul class="bullet-list">
-                <li>Worked closely with cross-functional teams to design secure cloud infrastructure on <strong>GCP</strong>, ensuring alignment with <strong>SEBI</strong> (India's securities regulator) compliance requirements.</li>
-                <li>Automated SSL certificate management for <strong>40+ AI services</strong>, which eliminated manual overhead and ensured zero downtime for the product team.</li>
-                <li>Communicated security risk analyses effectively to stakeholders, and optimized CI/CD pipelines to reduce team deployment times by <strong>70%</strong>.</li>
-              </ul>
-            </div>
-
-            <!-- Role 4 -->
-            <div class="timeline-item">
-              <div class="timeline-row">
-                <div class="role-col">
-                  <h3 class="job-title">Cloud Engineer</h3>
-                  <div class="company-name text-neon-cyan font-mono">Field Engineers | Internship</div>
-                </div>
-                <div class="date-col font-mono text-muted">
-                  Apr 2023 — Jul 2023
-                </div>
-              </div>
-              <ul class="bullet-list">
-                <li>Deployed a Ghost CMS architecture on <strong>DigitalOcean</strong>, streamlining content delivery and optimizing platform SEO.</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <!-- Technical Projects -->
-        <section class="resume-section">
-          <h2 class="section-heading font-mono">TECHNICAL PROJECTS</h2>
-          <div class="projects-list">
-            <!-- Project 1 -->
-            <div class="project-item">
-              <div class="project-header">
-                <h3 class="project-title font-mono">AI-SOC / Azure honeypot project:</h3>
-                <a href={`${baseUrl}/projects/ai-soc-azure-honeypot`} class="project-doc-link font-mono text-xs text-neon-cyan">
-                  [View Architecture Docs]
-                </a>
-              </div>
-              <p class="project-desc">
-                Provisioned a <strong>Cowrie honeypot on Azure with Terraform</strong>, piping live attack telemetry through <strong>Loki and Grafana</strong> for monitoring, with an LLM-based component layered in to analyze incoming attack and classification of incoming attacks by type and severity.
-              </p>
-            </div>
-
-            <!-- Project 2 -->
-            <div class="project-item">
-              <div class="project-header">
-                <h3 class="project-title font-mono">Kubernetes Production Cluster (HomeLab):</h3>
-                <a href={`${baseUrl}/projects/k8s-production-cluster`} class="project-doc-link font-mono text-xs text-neon-cyan">
-                  [View Architecture Docs]
-                </a>
-              </div>
-              <p class="project-desc">
-                Engineered a self-hosted environment running <strong>Proxmox, k3s, Traefik, and Grafana, NAT</strong>, demonstrating practical system administration skills and using it for hosting movies, storage, running dev environments etc.
-              </p>
-            </div>
-
-            <!-- Project 3 -->
-            <div class="project-item">
-              <div class="project-header">
-                <h3 class="project-title font-mono">RAG + Vector Search System:</h3>
-                <a href={`${baseUrl}/projects/rag-vector-search`} class="project-doc-link font-mono text-xs text-neon-cyan">
-                  [View Architecture Docs]
-                </a>
-              </div>
-              <p class="project-desc">
-                Collaborated on a high-performance embedding pipeline integrating <strong>FAISS and ChromaDB</strong> to power production chatbot workflows.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Skills & Languages -->
-        <section class="resume-section">
-          <h2 class="section-heading font-mono">SKILLS &amp; LANGUAGES</h2>
-          <div class="skills-rows">
-            <div class="skill-line">
-              <span class="skill-label font-mono text-neon-green">&bull; Core Stack:</span>
-              <span class="skill-content">Python, Node.js, Bash, Kubernetes, Docker, Terraform, Ansible, CI/CD (GitHub Actions, GitLab), AWS, GCP, Azure</span>
-            </div>
-            <div class="skill-line">
-              <span class="skill-label font-mono text-neon-green">&bull; Data &amp; Observability:</span>
-              <span class="skill-content">PostgreSQL, MongoDB, Vector DBs, Loki, Grafana</span>
-            </div>
-            <div class="skill-line">
-              <span class="skill-label font-mono text-neon-green">&bull; Security &amp; Networking:</span>
-              <span class="skill-content">Kali Linux (Bare-metal), Nmap, Wireshark, Cowrie (Honeypot), OPNsense, IAM Policy Design</span>
-            </div>
-            <div class="skill-line">
-              <span class="skill-label font-mono text-neon-green">&bull; Languages:</span>
-              <span class="skill-content">English (Fluent/C2) | Danish (Beginner &mdash; Enrolled in language courses)</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Interests & Hobbies -->
-        <section class="resume-section">
-          <h2 class="section-heading font-mono">INTERESTS &amp; HOBBIES</h2>
-          <p class="summary-text">
-            When I am not studying or maintaining my homelab and a bare-metal machine, I enjoy analyzing strategy mechanics in games like Clash of Clans and exploring cybersecurity narratives in shows like Mr. Robot. I value continuous learning and enjoy sharing knowledge with the community, having previously delivered public talks on DevOps and infrastructure architecture on behalf of the Konnect-AI community (India).
-          </p>
-        </section>
-      </main>
     </div>
+
+    <article class="sheet card">
+      <header>
+        <h1>{PERSON.name}</h1>
+        <p class="muted">
+          {PERSON.location} · <a href={`mailto:${PERSON.email}`}>{PERSON.email}</a> ·
+          <a href={PERSON.github} rel="me">GitHub</a> · <a href={PERSON.linkedin} rel="me">LinkedIn</a>
+        </p>
+      </header>
+
+      <section>
+        <h2>Summary</h2>
+        <p>
+          Cybersecurity master’s student at DTU with strong hands-on experience in DevOps and cloud infrastructure. I bridge complex
+          security architectures and smooth developer experiences, and I’m looking for a studentermedhjælper role (up to 90 hrs/month)
+          supporting a team’s cloud security operations and automation.
+        </p>
+      </section>
+
+      <section>
+        <h2>Education</h2>
+        {education.map((e) => (
+          <div class="row"><div><h3>{e.school}</h3><p class="muted">{e.degree} · {e.place}</p></div><span class="chip">{e.dates}</span></div>
+        ))}
+      </section>
+
+      <section>
+        <h2>Experience</h2>
+        {experience.map((e) => (
+          <div class="job">
+            <div class="row"><div><h3>{e.role}</h3><p class="muted">{e.org} · {e.kind}</p></div><span class="chip">{e.dates}</span></div>
+            <ul>{e.points.map((p) => <li>{p}</li>)}</ul>
+          </div>
+        ))}
+      </section>
+
+      <section>
+        <h2>Technical projects</h2>
+        <ul>
+          <li><a href={path('/projects/ai-soc-azure-honeypot/')}>AI-SOC / Azure honeypot</a> — Cowrie honeypot on Azure via Terraform, Loki and Grafana telemetry, LLM-based attack classification.</li>
+          <li><a href={path('/projects/k8s-production-cluster/')}>Kubernetes production cluster (homelab)</a> — Proxmox, k3s, Traefik, Grafana and NAT.</li>
+          <li><a href={path('/projects/rag-vector-search/')}>RAG + vector search system</a> — embedding pipeline with FAISS and ChromaDB powering production chatbot workflows.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Skills &amp; languages</h2>
+        <ul>
+          {skills.map(([k, v]) => <li><strong>{k}:</strong> {v}</li>)}
+          <li><strong>Languages:</strong> English (fluent, C2) · Danish (beginner, enrolled in courses)</li>
+        </ul>
+      </section>
+    </article>
   </div>
 </Layout>
 
 <script>
-  // Print / Save to PDF trigger
-  const printBtn = document.getElementById('print-resume-btn');
-  if (printBtn) {
-    printBtn.addEventListener('click', () => {
-      window.print();
-    });
-  }
+  document.getElementById('print')?.addEventListener('click', () => window.print());
 </script>
 
 <style>
-  .resume-page {
-    padding: 3rem 0 6rem 0;
-  }
-
-  .resume-container {
-    max-width: 900px;
-  }
-
-  .resume-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px dashed rgba(0, 240, 255, 0.25);
-  }
-
-  .back-link {
-    color: var(--color-neon-cyan);
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: color 0.2s;
-  }
-
-  .back-link:hover {
-    color: #ffffff;
-  }
-
-  .toolbar-right {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-
-  /* Main Resume Sheet */
-  .resume-sheet {
-    background: rgba(8, 14, 30, 0.95);
-    border: 1px solid rgba(0, 240, 255, 0.25);
-    padding: 3.5rem;
-    border-radius: 8px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-  }
-
-  /* Header */
-  .resume-header {
-    text-align: center;
-    padding-bottom: 2rem;
-    border-bottom: 2px solid rgba(0, 240, 255, 0.3);
-    margin-bottom: 2rem;
-  }
-
-  .candidate-name {
-    font-size: clamp(2.4rem, 5vw, 3.2rem);
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: -0.01em;
-    margin-bottom: 0.5rem;
-  }
-
-  .contact-subline {
-    font-size: 0.9rem;
-    color: var(--color-text-secondary);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .contact-link {
-    color: var(--color-neon-cyan);
-    text-decoration: none;
-  }
-
-  .contact-link:hover {
-    text-decoration: underline;
-  }
-
-  .sep {
-    color: var(--color-text-muted);
-  }
-
-  .visa-badge {
-    display: inline-block;
-    padding: 0.3rem 0.8rem;
-    background: rgba(0, 255, 102, 0.08);
-    border: 1px solid rgba(0, 255, 102, 0.3);
-    border-radius: 4px;
-    font-size: 0.8rem;
-  }
-
-  /* Sections */
-  .resume-section {
-    margin-bottom: 2.25rem;
-  }
-
-  .section-heading {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: 0.05em;
-    margin-bottom: 1rem;
-    padding-bottom: 0.35rem;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-  }
-
-  .summary-text {
-    font-size: 0.96rem;
-    line-height: 1.7;
-    color: var(--color-text-secondary);
-  }
-
-  .summary-text strong {
-    color: var(--color-text-primary);
-  }
-
-  /* Timeline */
-  .timeline-items {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .timeline-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-
-  .timeline-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .school-name,
-  .job-title {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #ffffff;
-  }
-
-  .degree-name,
-  .company-name {
-    font-size: 0.9rem;
-    margin-top: 0.15rem;
-  }
-
-  .program-note {
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    font-style: italic;
-    margin-top: 0.2rem;
-  }
-
-  .date-col {
-    font-size: 0.85rem;
-    white-space: nowrap;
-  }
-
-  .bullet-list {
-    padding-left: 1.25rem;
-    font-size: 0.92rem;
-    line-height: 1.65;
-    color: var(--color-text-secondary);
-    margin-top: 0.4rem;
-  }
-
-  .bullet-list li {
-    margin-bottom: 0.35rem;
-  }
-
-  .bullet-list li::marker {
-    color: var(--color-neon-cyan);
-  }
-
-  .bullet-list strong {
-    color: var(--color-text-primary);
-  }
-
-  /* Tech Skills */
-  .skills-rows {
-    display: flex;
-    flex-direction: column;
-    gap: 0.65rem;
-    font-size: 0.92rem;
-  }
-
-  .skill-line {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    line-height: 1.6;
-  }
-
-  .skill-label {
-    min-width: 240px;
-    font-weight: 600;
-  }
-
-  .skill-content {
-    color: var(--color-text-secondary);
-  }
-
-  /* Projects */
-  .projects-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .project-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 0.25rem;
-  }
-
-  .project-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #ffffff;
-  }
-
-  .project-doc-link {
-    text-decoration: none;
-  }
-
-  .project-doc-link:hover {
-    text-decoration: underline;
-  }
-
-  .project-desc {
-    font-size: 0.92rem;
-    line-height: 1.6;
-    color: var(--color-text-secondary);
-  }
-
-  .project-desc strong {
-    color: var(--color-text-primary);
-  }
-
-  /* Extracurricular */
-  .extra-list {
-    padding-left: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    font-size: 0.88rem;
-    line-height: 1.6;
-    color: var(--color-text-secondary);
-  }
-
-  .extra-list strong {
-    color: var(--color-text-primary);
-  }
-
-  /* ==========================================================================
-     PRINT STYLESHEET (A4 / Letter ATS-Friendly Clean Output)
-     ========================================================================== */
-  @media print {
-    :global(body) {
-      background: #ffffff !important;
-      color: #000000 !important;
-    }
-    :global(.cyber-header),
-    :global(.cyber-footer),
-    :global(.particle-void-container),
-    :global(.scanlines),
-    :global(.classification-strip),
-    :global(.cursor-glow),
-    .no-print {
-      display: none !important;
-    }
-
-    .resume-page {
-      padding: 0 !important;
-    }
-
-    .resume-container {
-      max-width: 100% !important;
-      padding: 0 !important;
-    }
-
-    .resume-sheet {
-      background: #ffffff !important;
-      color: #000000 !important;
-      border: none !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-    }
-
-    .candidate-name {
-      color: #000000 !important;
-      font-size: 22pt !important;
-    }
-
-    .contact-subline,
-    .visa-badge,
-    .summary-text,
-    .bullet-list,
-    .skill-content,
-    .project-desc,
-    .extra-list {
-      color: #222222 !important;
-      font-size: 9.5pt !important;
-    }
-
-    .section-heading {
-      color: #000000 !important;
-      border-bottom: 1.5pt solid #000000 !important;
-      font-size: 11pt !important;
-      margin-top: 12pt !important;
-      margin-bottom: 6pt !important;
-    }
-
-    .degree-name,
-    .company-name,
-    .school-name,
-    .job-title,
-    .project-title,
-    .skill-label {
-      color: #000000 !important;
-      font-weight: bold !important;
-    }
-
-    .contact-link,
-    .project-doc-link {
-      color: #000000 !important;
-      text-decoration: underline !important;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .resume-sheet {
-      padding: 2rem 1.25rem;
-    }
-    .skill-label {
-      min-width: 100%;
-    }
-  }
+  .wrap { padding-top: 32px; }
+  .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+  .actions { display: flex; gap: 10px; }
+  .sheet { max-width: 860px; margin: 0 auto; padding: 48px; }
+  header { margin-bottom: 8px; } header h1 { font-size: 2.2rem; margin-bottom: 4px; }
+  section { margin-top: 28px; } section h2 { font-size: 0.85rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 14px; }
+  .row { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 8px; }
+  h3 { margin: 0; font-size: 1.05rem; } .row p { margin: 0; font-size: 0.95rem; }
+  .job { margin-bottom: 18px; } ul { margin: 8px 0 0; padding-left: 1.2em; } li { margin-bottom: 5px; }
+  @media (max-width: 640px) { .sheet { padding: 24px 18px; } }
+  @media print { .sheet { border: 0; box-shadow: none; padding: 0; } }
 </style>

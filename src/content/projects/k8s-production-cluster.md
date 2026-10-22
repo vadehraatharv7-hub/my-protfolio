@@ -13,17 +13,10 @@ technologies:
   - "Cloudflare Tunnels"
   - "Docker"
 github: "https://github.com/vadehraatharv7-hub"
-demo: "https://vadehraatharv7-hub.github.io/my-protfolio/"
-featured: true
-status: "PRODUCTION OPERATIONAL"
-metrics:
-  Hypervisor: "Proxmox VE"
-  Ingress: "Traefik + SSL"
-  Networking: "MetalLB Layer-2"
-  Zero-Trust: "Cloudflare Tunnels"
+order: 2
 ---
 
-## 0x01 // Infrastructure Overview
+## Infrastructure Overview
 
 Self-hosting production workloads requires enterprise-grade isolation, automated ingress routing, and reliable observability. This project documents the complete architecture and deployment of a multi-node **k3s** Kubernetes cluster hosted on **Proxmox Virtual Environment (PVE)**.
 
@@ -42,7 +35,7 @@ Self-hosting production workloads requires enterprise-grade isolation, automated
 
 ---
 
-## 0x02 // Core Components & Architecture
+## Core Components & Architecture
 
 1. **k3s Lightweight Kubernetes**: Stripped of legacy in-tree cloud providers and storage drivers, consuming less than 512MB RAM per control node.
 2. **MetalLB Load Balancer**: Configured in Layer-2 mode to assign local LAN IP addresses from a dedicated pool (`192.168.1.200 - 192.168.1.220`) directly to Kubernetes Services of type `LoadBalancer`.
@@ -51,7 +44,7 @@ Self-hosting production workloads requires enterprise-grade isolation, automated
 
 ---
 
-## 0x03 // Observability & Monitoring Stack
+## Observability & Monitoring Stack
 
 A complete Prometheus and Grafana stack was deployed to monitor cluster resource utilization, pod memory pressure, and ingress request rates:
 

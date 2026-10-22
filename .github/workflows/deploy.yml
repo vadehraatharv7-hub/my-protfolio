@@ -35,6 +35,13 @@ jobs:
 
       - name: Build static site with Astro
         run: npm run build
+        env:
+          # Optional repo variables (Settings > Secrets and variables > Actions > Variables).
+          # Set SITE=https://vadehra.me and BASE_PATH=/ when moving to a custom domain.
+          SITE: ${{ vars.SITE }}
+          BASE_PATH: ${{ vars.BASE_PATH }}
+          PUBLIC_GOOGLE_SITE_VERIFICATION: ${{ vars.PUBLIC_GOOGLE_SITE_VERIFICATION }}
+          PUBLIC_BING_SITE_VERIFICATION: ${{ vars.PUBLIC_BING_SITE_VERIFICATION }}
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3

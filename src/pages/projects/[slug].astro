@@ -1,33 +1,61 @@
 ---
-// projects/[slug].astro - Dynamic Documentation Sub-page for each project (Astro 5)
-import { getCollection, render, type CollectionEntry } from 'astro:content';
-import ProjectDocLayout from '../../layouts/ProjectDocLayout.astro';
+import { render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getProjects, getPosts, readingMinutes } from '../../lib/posts';
+import { path, abs } from '../../lib/url';
+import { breadcrumbLd } from '../../lib/schema';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
-  return projects.map((entry) => ({
-    params: { slug: entry.id },
-    props: { entry },
-  }));
-}
-
-interface Props {
-  entry: CollectionEntry<'projects'>;
+  const projects = await getProjects();
+  return projects.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
 }
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+const d = entry.data;
+const related = (await getPosts()).filter((p) => p.data.project === entry.id);
+
+const jsonLd = [
+  breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Projects', path: '/projects/' }, { name: d.title }]),
+  {
+    '@type': 'TechArticle',
+    headline: d.title,
+    description: d.description,
+    url: abs(`/projects/${entry.id}/`),
+    author: { '@id': abs('/') + '#person' },
+    keywords: d.technologies.join(', '),
+    isPartOf: { '@id': abs('/') + '#website' },
+    about: d.category,
+  },
+];
 ---
 
-<ProjectDocLayout
-  title={entry.data.title}
-  tagline={entry.data.tagline}
-  category={entry.data.category}
-  technologies={entry.data.technologies}
-  github={entry.data.github}
-  demo={entry.data.demo}
-  status={entry.data.status}
-  metrics={entry.data.metrics}
->
-  <Content />
-</ProjectDocLayout>
+<Layout title={d.title} description={d.tagline} type="article" tags={d.technologies} jsonLd={jsonLd}>
+  <article class="container wrap">
+    <Breadcrumbs items={[{ name: 'Home', href: path('/') }, { name: 'Projects', href: path('/projects/') }, { name: d.title }]} />
+    <header class="prose head">
+      <p class="eyebrow">{d.category}</p>
+      <h1>{d.title}</h1>
+      <p class="lead muted">{d.description}</p>
+      <div class="chips">{d.technologies.map((t) => <span class="chip">{t}</span>)}</div>
+      <p class="links"><a class="btn" href={d.github} target="_blank" rel="noopener">View on GitHub</a></p>
+    </header>
+    <div class="prose body"><Content /></div>
+
+    {related.length > 0 && (
+      <aside class="prose related">
+        <h2>Related write-ups</h2>
+        {related.map((p) => <PostCard slug={p.id} title={p.data.title} description={p.data.description} date={p.data.date} category={p.data.category} minutes={readingMinutes(p.body)} />)}
+      </aside>
+    )}
+  </article>
+</Layout>
+
+<style>
+  .wrap { padding-top: 48px; padding-bottom: 32px; }
+  .head { margin-bottom: 8px; } .head h1 { font-size: clamp(2rem, 4.5vw, 2.8rem); }
+  .lead { font-size: 1.1rem; } .links { margin-top: 20px; }
+  .related { margin-top: 56px; }
+</style>

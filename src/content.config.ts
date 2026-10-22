@@ -1,36 +1,24 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-/**
- * Blog Content Collection (Astro 5 Content Layer)
- * Strictly matches the requested YAML frontmatter schema:
- * - title: string
- * - subtitle: string
- * - date: string
- * - time: string
- * - header_image: string
- * - author: string (Default: Atharv Vadehra)
- * - sources: array of links/references
- */
+// Unpublished material (templates, old drafts) lives in /drafts, outside the collections.
 const blog = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
   schema: z.object({
     title: z.string(),
-    subtitle: z.string(),
-    date: z.string(),
-    time: z.string(),
-    header_image: z.string(),
-    author: z.string().default('Atharv Vadehra'),
-    sources: z.array(z.string()).default([]),
-    tags: z.array(z.string()).optional().default([]),
-    classification: z.string().optional().default('RESTRICTED // EYES ONLY'),
+    description: z.string().max(200, 'Keep descriptions under 200 characters for search snippets'),
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    category: z.enum(['writeup', 'cyber-news', 'ai-news']),
+    tags: z.array(z.string()).default([]),
+    cover: z.string().optional(),
+    // Related project slug (src/content/projects/<slug>.md) for write-ups
+    project: z.string().optional(),
+    sources: z.array(z.object({ title: z.string(), url: z.string().url() })).default([]),
+    draft: z.boolean().default(false),
   }),
 });
 
-/**
- * Projects Content Collection (Astro 5 Content Layer)
- * Enables rich, markdown-driven documentation sub-pages for each project
- */
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: z.object({
@@ -39,17 +27,12 @@ const projects = defineCollection({
     description: z.string(),
     category: z.enum(['Cloud Security', 'DevOps & IaC', 'Network Security', 'Homelab & Virtualization', 'Distributed Systems']),
     technologies: z.array(z.string()),
-    github: z.string(),
-    demo: z.string().optional(),
+    github: z.string().url(),
+    demo: z.string().url().optional(),
+    order: z.number().default(99),
     featured: z.boolean().default(true),
-    status: z.string().default('ACTIVE DEPLOYMENT'),
-    architecture_overview: z.string().optional(),
-    threat_model: z.string().optional(),
-    metrics: z.record(z.string()).optional(),
+    draft: z.boolean().default(false),
   }),
 });
 
-export const collections = {
-  blog,
-  projects,
-};
+export const collections = { blog, projects };

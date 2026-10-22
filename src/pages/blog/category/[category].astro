@@ -1,0 +1,40 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PostCard from '../../../components/PostCard.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { getPosts, readingMinutes } from '../../../lib/posts';
+import { CATEGORIES } from '../../../config';
+import { path } from '../../../lib/url';
+
+export function getStaticPaths() {
+  return Object.keys(CATEGORIES).map((category) => ({ params: { category } }));
+}
+const { category } = Astro.params as { category: keyof typeof CATEGORIES };
+const meta = CATEGORIES[category];
+const posts = (await getPosts()).filter((p) => p.data.category === category);
+---
+
+<Layout title={meta.plural} description={`${meta.blurb} By Atharv Vadehra (ARV).`} noindex={posts.length === 0}>
+  <div class="container wrap">
+    <Breadcrumbs items={[{ name: 'Home', href: path('/') }, { name: 'Writing', href: path('/blog/') }, { name: meta.plural }]} />
+    <p class="eyebrow">Writing</p>
+    <h1>{meta.plural}</h1>
+    <p class="lead muted">{meta.blurb}</p>
+    <nav class="filters" aria-label="Categories">
+      <a class="chip" href={path('/blog/')}>All</a>
+      {Object.entries(CATEGORIES).map(([k, v]) => <a class={`chip ${k === category ? 'chip-accent' : ''}`} href={path(`/blog/category/${k}/`)}>{v.plural}</a>)}
+    </nav>
+    <div class="list">
+      {posts.length === 0 && <p class="muted">Nothing here yet.</p>}
+      {posts.map((p) => <PostCard slug={p.id} title={p.data.title} description={p.data.description} date={p.data.date} category={p.data.category} minutes={readingMinutes(p.body)} />)}
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .wrap { padding-top: 48px; padding-bottom: 32px; }
+  .lead { font-size: 1.1rem; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 36px; }
+  .filters a { text-decoration: none; padding: 5px 12px; }
+  .list { max-width: 760px; }
+</style>

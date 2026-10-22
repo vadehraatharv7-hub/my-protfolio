@@ -1,232 +1,35 @@
 ---
-// Footer.astro - Terminal Telemetry & Secure Protocol Footer
-const currentYear = new Date().getFullYear();
-const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
+import { PERSON } from '../config';
+import { path } from '../lib/url';
+const year = new Date().getFullYear();
 ---
 
-<footer class="cyber-footer">
-  <div class="container footer-inner">
-    <!-- Terminal Diagnostic Ribbon -->
-    <div class="footer-telemetry">
-      <div class="telemetry-item">
-        <span class="font-mono text-neon-green">● EDUCATION:</span>
-        <span class="font-mono text-muted">DTU_M.SC._CYBER_SECURITY</span>
-      </div>
-      <div class="telemetry-item">
-        <span class="font-mono text-neon-cyan">▲ WORK_PERMIT:</span>
-        <span class="font-mono text-muted">STUDENT_VISA_90H/MO</span>
-      </div>
-      <div class="telemetry-item">
-        <span class="font-mono text-neon-amber">■ BASE:</span>
-        <span class="font-mono text-muted">COPENHAGEN_DENMARK</span>
-      </div>
-      <div class="telemetry-item">
-        <span class="font-mono text-neon-green">★ HOSTING:</span>
-        <span class="font-mono text-muted">GITHUB_PAGES_STATIC</span>
-      </div>
+<footer class="site-footer">
+  <div class="container inner">
+    <div>
+      <strong>{PERSON.name}</strong> <span class="faint">(ARV)</span>
+      <p class="muted small">Cybersecurity MSc student at DTU. DevOps &amp; cloud engineer based in {PERSON.location}.</p>
     </div>
-
-    <div class="footer-main-grid">
-      <!-- Column 1: Identity & Bio -->
-      <div class="footer-col">
-        <div class="col-title font-mono">[ ATHARV VADEHRA ]</div>
-        <p class="footer-desc">
-          Cybersecurity Master's student at the Technical University of Denmark (DTU) with industry
-          experience in DevOps, cloud infrastructure, and security architecture. Adept at Kubernetes,
-          Docker, and Terraform. Seeking a part-time student IT role in Denmark.
-        </p>
-        <div class="pgp-box font-mono">
-          <div class="pgp-label text-neon-cyan">STUDENT WORK AUTHORIZATION:</div>
-          <div class="pgp-hash">Permitted up to 90 hrs/month under Danish Student Visa</div>
-        </div>
-      </div>
-
-      <!-- Column 2: Quick Links -->
-      <div class="footer-col">
-        <div class="col-title font-mono">[ NAVIGATION_TREE ]</div>
-        <ul class="footer-links font-mono">
-          <li><a href={`${baseUrl}/#education`}><span class="link-prefix">&gt;</span> // 01.ACADEMICS</a></li>
-          <li><a href={`${baseUrl}/#experience`}><span class="link-prefix">&gt;</span> // 02.EXPERIENCE</a></li>
-          <li><a href={`${baseUrl}/projects`}><span class="link-prefix">&gt;</span> // 03.PROJECTS</a></li>
-          <li><a href={`${baseUrl}/resume`}><span class="link-prefix">&gt;</span> // 04.OFFICIAL_RESUME</a></li>
-          <li>
-            <a href="https://github.com/vadehraatharv7-hub" target="_blank" rel="noopener noreferrer">
-              <span class="link-prefix">&gt;</span> // 05.GITHUB_PROFILE
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Column 3: Communication Vectors -->
-      <div class="footer-col">
-        <div class="col-title font-mono">[ STUDENT_CONTACT ]</div>
-        <p class="footer-desc">
-          Available for part-time student developer / DevOps / security positions in Copenhagen or remote.
-        </p>
-        <div class="comm-links">
-          <a
-            href="mailto:atharv@vadehra.me"
-            class="cyber-btn variant-green comm-btn"
-          >
-            <span class="font-mono">atharv@vadehra.me</span>
-          </a>
-          <a
-            href="https://www.linkedin.com/in/atharv-vadehra/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="cyber-btn variant-ghost comm-btn"
-          >
-            <span class="font-mono">LINKEDIN</span>
-          </a>
-          <a
-            href="https://github.com/vadehraatharv7-hub"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="cyber-btn variant-ghost comm-btn"
-          >
-            <span class="font-mono">GITHUB</span>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom Bar -->
-    <div class="footer-bottom">
-      <div class="font-mono text-xs text-muted">
-        © {currentYear} Atharv Vadehra. Statically compiled with Astro for GitHub Pages.
-      </div>
-      <div class="font-mono text-xs text-muted">
-        SECURE_SESSION_OK
-      </div>
-    </div>
+    <ul>
+      <li><a href={path('/projects/')}>Projects</a></li>
+      <li><a href={path('/blog/')}>Writing</a></li>
+      <li><a href={path('/resume/')}>Resume</a></li>
+      <li><a href={PERSON.github} rel="me noopener" target="_blank">GitHub</a></li>
+      <li><a href={PERSON.linkedin} rel="me noopener" target="_blank">LinkedIn</a></li>
+      <li><a href={`mailto:${PERSON.email}`}>Email</a></li>
+      <li><a href={path('/rss.xml')}>RSS</a></li>
+    </ul>
   </div>
+  <div class="container legal small faint">© {year} {PERSON.name}. Built with Astro.</div>
 </footer>
 
 <style>
-  .cyber-footer {
-    position: relative;
-    z-index: 10;
-    background: rgba(3, 6, 14, 0.95);
-    border-top: 1px solid rgba(0, 240, 255, 0.18);
-    margin-top: auto;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-  }
-
-  .footer-telemetry {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    padding: 0.85rem 1.25rem;
-    background: rgba(8, 14, 30, 0.6);
-    border: 1px solid rgba(0, 240, 255, 0.15);
-    border-radius: 4px;
-    margin-bottom: 2.5rem;
-    font-size: 0.78rem;
-  }
-
-  .telemetry-item {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-
-  .footer-main-grid {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1.2fr;
-    gap: 3rem;
-    margin-bottom: 2.5rem;
-  }
-
-  .col-title {
-    color: var(--color-neon-cyan);
-    font-size: 0.88rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    letter-spacing: 0.06em;
-  }
-
-  .footer-desc {
-    font-size: 0.85rem;
-    line-height: 1.6;
-    color: var(--color-text-secondary);
-    margin-bottom: 1.25rem;
-  }
-
-  .pgp-box {
-    padding: 0.65rem 0.85rem;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(0, 240, 255, 0.18);
-    border-radius: 4px;
-    font-size: 0.72rem;
-  }
-
-  .pgp-label {
-    font-weight: 600;
-    margin-bottom: 0.2rem;
-  }
-
-  .pgp-hash {
-    color: var(--color-text-muted);
-    letter-spacing: 0.05em;
-    word-break: break-all;
-  }
-
-  .footer-links {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .footer-links a {
-    color: var(--color-text-secondary);
-    text-decoration: none;
-    font-size: 0.82rem;
-    transition: all 0.2s ease;
-    display: inline-block;
-  }
-
-  .link-prefix {
-    color: var(--color-neon-cyan);
-    margin-right: 0.3rem;
-  }
-
-  .footer-links a:hover {
-    color: var(--color-neon-cyan);
-    transform: translateX(4px);
-  }
-
-  .comm-links {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .comm-btn {
-    width: 100%;
-    font-size: 0.75rem;
-    padding: 0.6rem 1rem;
-  }
-
-  .footer-bottom {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(148, 163, 184, 0.1);
-    gap: 1rem;
-  }
-
-  @media (max-width: 900px) {
-    .footer-main-grid {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
-    .footer-telemetry {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-  }
+  .site-footer { border-top: 1px solid var(--border); margin-top: 64px; padding: 40px 0 28px; background: var(--bg-sunken); }
+  .inner { display: flex; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+  .small { font-size: 0.9rem; }
+  p { margin: 6px 0 0; max-width: 360px; }
+  ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px 20px; align-content: flex-start; max-width: 420px; }
+  a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; }
+  a:hover { color: var(--accent); }
+  .legal { margin-top: 28px; }
 </style>

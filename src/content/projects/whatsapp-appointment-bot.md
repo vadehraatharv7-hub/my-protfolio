@@ -12,17 +12,10 @@ technologies:
   - "PostgreSQL"
   - "Docker"
 github: "https://github.com/vadehraatharv7-hub"
-demo: "https://vadehraatharv7-hub.github.io/my-protfolio/"
-featured: true
-status: "OPERATIONAL"
-metrics:
-  Integration: "Twilio WhatsApp"
-  Backend: "FastAPI Async"
-  Booking Accuracy: "99.8%"
-  Response Time: "< 350 ms"
+order: 5
 ---
 
-## 0x01 // Project Architecture
+## Project Architecture
 
 Manual appointment scheduling in healthcare and service industries suffers from high administrative overhead and missed appointments. This bot enables natural conversational scheduling directly via WhatsApp with zero app installations required by end clients.
 
@@ -44,7 +37,7 @@ Manual appointment scheduling in healthcare and service industries suffers from 
 
 ---
 
-## 0x02 // Core Capabilities & Algorithmic Design
+## Core Capabilities & Algorithmic Design
 
 1. **Stateful Conversation Engine**: Maintains session state in **Redis** with time-to-live (TTL) expiration to track intent progression across user messages.
 2. **Dynamic Slot-Finding Algorithm**: Scans provider schedules to find conflicts, merges overlapping breaks, and presents the top 3 earliest available time windows.
@@ -77,7 +70,7 @@ async def handle_incoming_message(request: Request):
 
 ---
 
-## 0x03 // Reliability & Reminders
+## Reliability & Reminders
 
 - Background asynchronous tasks trigger reminders 24 hours and 2 hours prior to scheduled slots, drastically cutting no-show rates.
 - Cryptographic signature validation (`X-Twilio-Signature`) verifies that incoming webhook payloads originate exclusively from Twilio servers.

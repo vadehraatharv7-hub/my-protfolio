@@ -1,8 +1,8 @@
 {
-  "name": "cyber-antigravity-portfolio",
+  "name": "atharv-vadehra-portfolio",
   "type": "module",
   "version": "1.0.0",
-  "description": "Anti-Gravity Cyber Portfolio & Markdown Blog for Atharv Vadehra - Cybersecurity & DevOps Engineer",
+  "description": "Portfolio and blog of Atharv Vadehra (ARV)",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -11,6 +11,8 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
     "astro": "^7.3.2"
   },
   "engines": {
