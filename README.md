@@ -10,7 +10,7 @@ Astro static site, deployed to GitHub Pages by `.github/workflows/deploy.yml`.
 Projects live in `src/content/projects/`. Identity data is in `src/config.ts` and `src/data/profile.ts`.
 
 ## SEO / GEO checklist
-- Move to a root domain (e.g. `https://vadehra.me`): set repo variables `SITE` and `BASE_PATH=/`, add `public/CNAME`. `robots.txt` and `llms.txt` only work at a domain root.
+- Domain: `https://atharvvadehra.dev` (see `public/CNAME`). In the repo: Settings > Pages > Custom domain, enable "Enforce HTTPS". At your DNS provider add four A records for the apex (185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153) and a `www` CNAME to `vadehraatharv7-hub.github.io`.
 - Verify in Google Search Console and Bing Webmaster Tools; set `PUBLIC_GOOGLE_SITE_VERIFICATION` / `PUBLIC_BING_SITE_VERIFICATION`, submit `sitemap-index.xml`.
 - Use "Atharv Vadehra" and "ARV" consistently on LinkedIn, GitHub, and other profiles, linking back to this site.
 

@@ -37,7 +37,7 @@ jobs:
         run: npm run build
         env:
           # Optional repo variables (Settings > Secrets and variables > Actions > Variables).
-          # Set SITE=https://vadehra.me and BASE_PATH=/ when moving to a custom domain.
+          # Optional overrides; defaults in astro.config.mjs target https://atharvvadehra.dev.
           SITE: ${{ vars.SITE }}
           BASE_PATH: ${{ vars.BASE_PATH }}
           PUBLIC_GOOGLE_SITE_VERIFICATION: ${{ vars.PUBLIC_GOOGLE_SITE_VERIFICATION }}
