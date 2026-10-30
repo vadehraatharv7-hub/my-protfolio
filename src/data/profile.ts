@@ -33,7 +33,7 @@ export const skills = [
   ['Cloud & infrastructure', 'AWS, Google Cloud, Azure, DigitalOcean, Kubernetes (k3s), Docker, Proxmox'],
   ['Automation & CI/CD', 'Terraform, Ansible, GitHub Actions, GitLab CI, Bash, Python, Node.js'],
   ['Security & networking', 'IAM policy design (least privilege), Wazuh SIEM, detection engineering (MITRE ATT&CK), honeypots (Cowrie, Snare, Tanner), Cloudflare Zero Trust (Tunnel, Access), network segmentation (VLANs, firewalls), TLS / SSL automation, secrets scanning (gitleaks), OPNsense, Nmap, Wireshark, Kali Linux'],
-  ['AI & machine learning', 'LLM-assisted threat triage, retrieval-augmented generation (RAG), embeddings and vector search (FAISS, ChromaDB), prompt-injection hardening, MLOps (conference talks)'],
+  ['AI & machine learning', 'Retrieval-augmented generation (RAG), embeddings and vector search (FAISS, ChromaDB), prompt-injection hardening, MLOps (conference talks)'],
   ['Data & observability', 'PostgreSQL, MongoDB, FAISS, ChromaDB, Grafana, Loki, Prometheus'],
 ];
 
@@ -44,10 +44,10 @@ export const talks = [
 
 export const faq = [
   ['Who is Atharv Vadehra?', `Atharv Vadehra, also known as ARV, is a cybersecurity MSc student at the Technical University of Denmark (DTU) in Copenhagen with professional experience in DevOps, cloud infrastructure and security engineering. He is building the bridge between AI/ML and cyber security. He holds a B.Tech in Digital Transformation from Atria University, Bangalore.`],
-  ['What does Atharv Vadehra work on?', 'Secure cloud and Kubernetes infrastructure, infrastructure as code (Terraform, Ansible), CI/CD, SIEM and detection engineering (Wazuh, MITRE ATT&CK), honeypots and threat telemetry, LLM-assisted threat triage, and retrieval-augmented generation (RAG) systems.'],
+  ['What does Atharv Vadehra work on?', 'Secure cloud and Kubernetes infrastructure, infrastructure as code (Terraform, Ansible), CI/CD, SIEM and detection engineering (Wazuh, MITRE ATT&CK), honeypots and threat analytics, and retrieval-augmented generation (RAG) systems.'],
   ['Is Atharv Vadehra available for work?', 'Yes. He is looking for a part-time studentermedhjælper (student assistant) role in the Copenhagen area, up to 90 hours per month on his student visa.'],
-  ['What security and AI projects has Atharv Vadehra built?', 'An Azure honeypot with LLM-assisted attack triage, a Proxmox homelab built with Terraform (Wazuh SIEM, Cowrie and Snare/Tanner honeypots, a MongoDB log store, Cloudflare Zero Trust access), a retrieval-augmented generation (RAG) and vector search system, and enterprise cloud security and TLS automation work.'],
-  ['Is Atharv Vadehra working on AI and machine learning?', 'Yes. His focus is the bridge between AI/ML and cyber security: LLM-assisted triage of honeypot attacks mapped to MITRE ATT&CK, retrieval-augmented generation (RAG) with FAISS and ChromaDB, securing infrastructure for 40+ AI services at Corover AI, and talks on MLOps and security infrastructure.'],
+  ['What security and AI projects has Atharv Vadehra built?', 'An Azure honeypot platform with a custom Go and React analytics dashboard (SecDash) and MITRE ATT&CK mapping, a Proxmox homelab built with Terraform (Wazuh SIEM, Cowrie and Snare/Tanner honeypots, a MongoDB log store, Cloudflare Zero Trust access), a retrieval-augmented generation (RAG) and vector search system, and enterprise cloud security and TLS automation work.'],
+  ['Is Atharv Vadehra working on AI and machine learning?', 'Yes. His focus is the bridge between AI/ML and cyber security: honeypot analytics that map attacker behaviour to MITRE ATT&CK, retrieval-augmented generation (RAG) with FAISS and ChromaDB, securing infrastructure for 40+ AI services at Corover AI, and talks on MLOps and security infrastructure.'],
   ['What does ARV stand for?', 'ARV is the short name and online handle of Atharv Vadehra.'],
 ];
 

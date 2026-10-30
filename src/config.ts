@@ -17,7 +17,7 @@ export const PERSON = {
     'MITRE ATT&CK', 'Threat detection', 'Zero Trust', 'Least privilege', 'IAM',
     'DevOps', 'DevSecOps', 'Kubernetes', 'Terraform', 'Ansible',
     'AWS', 'Google Cloud', 'Microsoft Azure', 'Docker', 'CI/CD', 'Honeypots',
-    'Artificial intelligence', 'Large language models', 'LLM-assisted threat triage',
+    'Artificial intelligence', 'Large language models', 'Security analytics',
     'Retrieval-augmented generation', 'Vector search', 'Embeddings', 'MLOps',
     'Observability', 'Python', 'Linux',
   ],
@@ -27,7 +27,7 @@ export const PERSON = {
 export const SITE_TITLE = 'Atharv Vadehra (ARV)';
 export const SITE_TAGLINE = 'Cybersecurity MSc student at DTU, bridging AI/ML and cyber security, with a DevOps & cloud background';
 export const DEFAULT_DESCRIPTION =
-  'Atharv Vadehra (ARV) is a cybersecurity MSc student at DTU in Copenhagen with a DevOps and cloud background, building the bridge between AI/ML and cyber security: LLM-assisted threat triage, RAG, SIEM, honeypots and secure AI infrastructure.';
+  'Atharv Vadehra (ARV) is a cybersecurity MSc student at DTU in Copenhagen with a DevOps and cloud background, building the bridge between AI/ML and cyber security: honeypot analytics with MITRE ATT&CK, RAG, SIEM and secure AI infrastructure.';
 
 export const CATEGORIES = {
   writeup: { label: 'Write-up', plural: 'Write-ups', blurb: 'Deep dives into projects I have built.' },

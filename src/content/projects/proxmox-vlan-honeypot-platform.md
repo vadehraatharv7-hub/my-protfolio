@@ -74,7 +74,7 @@ Nothing in the DMZ can reach the database, the LAN or any other private network.
 | `proxmox-installs.yml` | Types the one confirmation each Ubuntu installer needs (`qm sendkey` on the host), then waits for every VM to answer on SSH |
 | `common` | Updates, NTP, hardened `sshd`, fail2ban on port 22222, unattended security updates, kernel hardening |
 | `mongodb` | MongoDB 8.0 from the official repository, version held, bound to the private address, authentication on, application account, daily backup |
-| `monitoring` | The Go backend and Node frontend of SecDash, PM2, nginx with HTTPS, admin login and tokens |
+| `monitoring` | The Go backend and React frontend of SecDash, PM2, nginx with HTTPS, admin login and tokens |
 | `vector`, `honeypot`, `snare`, `xpd_shield` | Cowrie, Snare/Tanner behind a TLS proxy, log shipping, and the XDP ban filter |
 | `verify.yml` | Checks every service **and** that the zones are isolated |
 

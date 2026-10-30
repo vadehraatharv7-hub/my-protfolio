@@ -1,6 +1,6 @@
 ---
 title: "Why I'm building the bridge between AI/ML and cybersecurity"
-description: "Why I study cybersecurity but keep building with AI: using LLMs to triage attacks, securing the infrastructure AI runs on, and what I want to learn next at the point where the two fields meet."
+description: "Why I study cybersecurity but keep building with AI: honeypot analytics, securing the infrastructure AI runs on, and what I want to learn next where the two fields meet."
 date: 2026-10-30
 category: writeup
 tags: ["AI", "Machine learning", "Cybersecurity", "LLM", "RAG", "MITRE ATT&CK", "MLOps", "AI security"]
@@ -29,7 +29,7 @@ If you only know one side, you miss the other. I want to be comfortable on both.
 
 ## How my work fits
 
-**Using an LLM to triage attacks.** In my [AI-SOC and Azure honeypot project](/projects/ai-soc-azure-honeypot/), a Cowrie honeypot on Azure captures attacker sessions, and an LLM-based component reads the commands and classifies them by attack type, intent and severity, mapped to MITRE ATT&CK. The point is to turn a wall of raw shell input into something an analyst can act on.
+**Turning raw attacks into structured data.** In my [AI-SOC and Azure honeypot project](/projects/ai-soc-azure-honeypot/), honeypots on Azure capture attacker sessions, and SecDash, a dashboard I built in Go and React, scores each attacker, classifies their behaviour, links campaigns and maps what they did to MITRE ATT&CK. An earlier version used an LLM to summarise attacks. I replaced it with a local rule engine, so today that analysis is deterministic, not AI. What it gives me is a clean, structured dataset about attacker behaviour, which is the raw material any machine-learning approach would need.
 
 **Giving the data somewhere to live.** AI is only as useful as the data behind it. My [homelab](/blog/hypervisor-firewall-pattern-homelab/) collects honeypot events in a [Wazuh SIEM](/projects/wazuh-siem-homelab/) with my own [detection rules](/projects/homelab-honeypots-lxc/), and keeps every event in a [MongoDB log store](/projects/mongodb-log-store/), tagged `honeypot` or `production`. That separation matters: you can't study attacker behaviour if decoy noise is mixed up with real traffic.
 
@@ -41,7 +41,7 @@ If you only know one side, you miss the other. I want to be comfortable on both.
 
 I want to go deeper, not just stay at the surface of both fields. Specifically:
 
-- Learn how machine-learning and LLM approaches to detection really perform on attacker behaviour, including where they fail.
+- Bring machine learning back on top of the data my honeypots already produce, and measure how it compares with my rule engine, including where it fails.
 - Use my honeypot and SIEM lab as a hands-on testbed, because I control it and can break it safely.
 - Get better at defending AI systems themselves, starting with prompt injection and the other risks in the OWASP list for LLM applications.
 
