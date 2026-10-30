@@ -7,7 +7,7 @@ Personal portfolio and blog of **Atharv Vadehra (ARV)**, cybersecurity MSc stude
 ## What's on the site
 
 - **About, experience, skills** — sourced from my resume.
-- **Projects** — architecture write-ups for the AI-SOC Azure honeypot, a Proxmox + k3s Kubernetes cluster, a RAG / vector search system, enterprise cloud security work and a WhatsApp appointment bot.
+- **Projects** — architecture write-ups for the AI-SOC Azure honeypot, the Proxmox homelab as code (Budget Tracker hosting, DVWA lab, Wazuh SIEM, LXC honeypots, MongoDB log store, VLAN honeypot platform), a Proxmox + k3s Kubernetes cluster, a RAG / vector search system, enterprise cloud security work and a WhatsApp appointment bot.
 - **Writing** — project write-ups and commentary on cybersecurity and AI news, with an RSS feed.
 - **Resume** — an online version and a downloadable PDF.
 
