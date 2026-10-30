@@ -121,6 +121,8 @@ p { margin: 0 0 1em; }
 .prose th, .prose td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
 .prose th { background: var(--bg-sunken); }
 .prose img { border-radius: 10px; }
+.diagram { overflow-x: auto; margin: 1.5em 0; padding: 12px; background: var(--bg-sunken); border: 1px solid var(--border); border-radius: 10px; }
+.diagram svg { display: block; width: 100%; min-width: 720px; height: auto; }
 .prose hr { border: 0; border-top: 1px solid var(--border); margin: 2.5em 0; }
 /* Shiki writes an inline background on <pre>, so override it with !important; spans must stay transparent. */
 .astro-code { background-color: var(--code-bg) !important; }
