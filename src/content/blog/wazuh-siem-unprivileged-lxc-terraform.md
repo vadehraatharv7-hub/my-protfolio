@@ -3,7 +3,7 @@ title: "A lab you can't see into teaches you nothing: why I built my own SIEM"
 description: "Why I run Wazuh as the eyes of my homelab, and how I built it from code: a firewalled container, a login-protected dashboard, and labels that tell decoys apart from real machines."
 date: 2026-10-30
 category: writeup
-tags: ["Wazuh", "SIEM", "Terraform", "Proxmox", "Cloudflare Access", "Detection engineering"]
+tags: ["Wazuh", "SIEM", "Security monitoring", "Terraform", "Proxmox", "Cloudflare Access", "Zero Trust", "Detection engineering"]
 project: wazuh-siem-homelab
 sources:
   - title: "Wazuh documentation"

@@ -11,6 +11,12 @@ technologies:
   - "CI/CD"
   - "SSL / TLS"
   - "IAM"
+  - "Least Privilege"
+  - "Workload Identity"
+  - "Compliance (SEBI)"
+  - "DevSecOps"
+  - "Container Image Signing"
+  - "Encryption at Rest (CMEK)"
   - "Python"
 github: "https://github.com/vadehraatharv7-hub"
 order: 7

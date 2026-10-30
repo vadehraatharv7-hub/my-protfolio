@@ -13,6 +13,10 @@ technologies:
   - "Snare"
   - "MongoDB"
   - "XDP / eBPF"
+  - "Network Segmentation"
+  - "Threat Detection"
+  - "Deception Technology"
+  - "Least Privilege"
   - "Go"
 github: "https://github.com/vadehraatharv7-hub/homelab/tree/main/projects/honeypot"
 order: 11

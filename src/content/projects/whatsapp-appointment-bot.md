@@ -8,6 +8,7 @@ technologies:
   - "FastAPI"
   - "Twilio API"
   - "Webhooks"
+  - "Webhook Signature Validation"
   - "Redis"
   - "PostgreSQL"
   - "Docker"

@@ -13,9 +13,13 @@ export const PERSON = {
   employer: { name: 'Technical University of Denmark (DTU)', url: 'https://www.dtu.dk' },
   alumniOf: { name: 'Atria University', url: 'https://atriauniversity.edu.in' },
   knowsAbout: [
-    'Cybersecurity', 'Cloud security', 'DevOps', 'Kubernetes', 'Terraform', 'Ansible',
+    'Cybersecurity', 'Cloud security', 'Network security', 'SIEM', 'Detection engineering',
+    'MITRE ATT&CK', 'Threat detection', 'Zero Trust', 'Least privilege', 'IAM',
+    'DevOps', 'DevSecOps', 'Kubernetes', 'Terraform', 'Ansible',
     'AWS', 'Google Cloud', 'Microsoft Azure', 'Docker', 'CI/CD', 'Honeypots',
-    'Retrieval-augmented generation', 'Observability', 'Python', 'Linux',
+    'Artificial intelligence', 'Large language models', 'LLM-assisted threat triage',
+    'Retrieval-augmented generation', 'Vector search', 'Embeddings', 'MLOps',
+    'Observability', 'Python', 'Linux',
   ],
   headshot: '/images/atharv-vadehra.jpg',
 } as const;
@@ -23,7 +27,7 @@ export const PERSON = {
 export const SITE_TITLE = 'Atharv Vadehra (ARV)';
 export const SITE_TAGLINE = 'Cybersecurity MSc student at DTU and DevOps & cloud engineer';
 export const DEFAULT_DESCRIPTION =
-  'Atharv Vadehra (ARV) is a cybersecurity MSc student at the Technical University of Denmark (DTU) and DevOps / cloud engineer in Copenhagen. Projects, write-ups, and notes on cybersecurity and AI.';
+  'Atharv Vadehra (ARV) is a cybersecurity MSc student at the Technical University of Denmark (DTU) and DevOps / cloud engineer in Copenhagen. Projects in cloud security, SIEM and detection engineering, honeypots, and AI systems (LLMs and RAG), plus write-ups and notes on cybersecurity and AI.';
 
 export const CATEGORIES = {
   writeup: { label: 'Write-up', plural: 'Write-ups', blurb: 'Deep dives into projects I have built.' },

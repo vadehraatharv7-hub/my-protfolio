@@ -3,7 +3,7 @@ title: "I built traps for attackers: honeypots that tell me how real attacks beh
 description: "Why I run honeypots (a fake SSH server and a fake website), what I want to learn from them, and how I wired them into Wazuh with detection rules, while keeping the traps from becoming a way in."
 date: 2026-10-30
 category: writeup
-tags: ["Honeypot", "Cowrie", "Snare", "Tanner", "Wazuh", "MITRE ATT&CK", "Detection engineering"]
+tags: ["Honeypot", "Threat detection", "Cowrie", "Snare", "Tanner", "Wazuh", "MITRE ATT&CK", "Detection engineering"]
 project: homelab-honeypots-lxc
 sources:
   - title: "Cowrie SSH/Telnet honeypot"

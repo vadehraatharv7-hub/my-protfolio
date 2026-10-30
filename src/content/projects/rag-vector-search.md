@@ -11,6 +11,11 @@ technologies:
   - "MongoDB"
   - "Docker"
   - "Embeddings"
+  - "Retrieval-Augmented Generation"
+  - "Vector Search"
+  - "Large Language Models"
+  - "Prompt Injection Defence"
+  - "API Rate Limiting"
 github: "https://github.com/vadehraatharv7-hub"
 order: 6
 ---

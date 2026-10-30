@@ -12,7 +12,7 @@ export async function GET(_ctx: APIContext) {
     '',
     `> ${DEFAULT_DESCRIPTION}`,
     '',
-    `${PERSON.name}, also known as ARV, is based in ${PERSON.location}. He is a cybersecurity MSc student at the Technical University of Denmark (DTU) and a DevOps / cloud engineer (Kubernetes, Terraform, AWS, GCP, Azure). He is seeking a part-time studentermedhjælper role (up to 90 hours/month).`,
+    `${PERSON.name}, also known as ARV, is based in ${PERSON.location}. He is a cybersecurity MSc student at the Technical University of Denmark (DTU) and a DevOps / cloud engineer (Kubernetes, Terraform, AWS, GCP, Azure). His projects cover SIEM and detection engineering (Wazuh, MITRE ATT&CK), honeypots, Zero Trust access, LLM-assisted threat triage and retrieval-augmented generation (RAG). He is seeking a part-time studentermedhjælper role (up to 90 hours/month).`,
     '',
     '## Identity',
     `- [Home / profile](${abs('/')}): bio, experience, skills, FAQ`,

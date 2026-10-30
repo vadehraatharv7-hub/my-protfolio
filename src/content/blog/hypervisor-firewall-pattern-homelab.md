@@ -3,7 +3,7 @@ title: "Building a homelab where nothing is trusted: the story of six projects"
 description: "Why I built a Proxmox homelab as code: to practise both sides of security, host real things safely, attract attackers on purpose, and watch them. How six small projects fit together."
 date: 2026-10-30
 category: writeup
-tags: ["Homelab", "Proxmox", "Terraform", "Security", "Learning", "Firewall"]
+tags: ["Homelab", "Proxmox", "Terraform", "Cybersecurity", "Zero Trust", "Least privilege", "Network security", "Firewall"]
 project: proxmox-homelab-iac
 sources:
   - title: "Proxmox VE Firewall"

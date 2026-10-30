@@ -32,7 +32,8 @@ export const experience = [
 export const skills = [
   ['Cloud & infrastructure', 'AWS, Google Cloud, Azure, DigitalOcean, Kubernetes (k3s), Docker, Proxmox'],
   ['Automation & CI/CD', 'Terraform, Ansible, GitHub Actions, GitLab CI, Bash, Python, Node.js'],
-  ['Security & networking', 'IAM policy design, honeypots (Cowrie), OPNsense, Nmap, Wireshark, Kali Linux'],
+  ['Security & networking', 'IAM policy design (least privilege), Wazuh SIEM, detection engineering (MITRE ATT&CK), honeypots (Cowrie, Snare, Tanner), Cloudflare Zero Trust (Tunnel, Access), network segmentation (VLANs, firewalls), TLS / SSL automation, secrets scanning (gitleaks), OPNsense, Nmap, Wireshark, Kali Linux'],
+  ['AI & machine learning', 'LLM-assisted threat triage, retrieval-augmented generation (RAG), embeddings and vector search (FAISS, ChromaDB), prompt-injection hardening, MLOps (conference talks)'],
   ['Data & observability', 'PostgreSQL, MongoDB, FAISS, ChromaDB, Grafana, Loki, Prometheus'],
 ];
 
@@ -43,8 +44,9 @@ export const talks = [
 
 export const faq = [
   ['Who is Atharv Vadehra?', `Atharv Vadehra, also known as ARV, is a cybersecurity MSc student at the Technical University of Denmark (DTU) in Copenhagen with professional experience in DevOps, cloud infrastructure and security engineering. He holds a B.Tech in Digital Transformation from Atria University, Bangalore.`],
-  ['What does Atharv Vadehra work on?', 'Secure cloud and Kubernetes infrastructure, infrastructure as code (Terraform, Ansible), CI/CD, honeypots and threat telemetry, and retrieval-augmented generation (RAG) systems.'],
+  ['What does Atharv Vadehra work on?', 'Secure cloud and Kubernetes infrastructure, infrastructure as code (Terraform, Ansible), CI/CD, SIEM and detection engineering (Wazuh, MITRE ATT&CK), honeypots and threat telemetry, LLM-assisted threat triage, and retrieval-augmented generation (RAG) systems.'],
   ['Is Atharv Vadehra available for work?', 'Yes. He is looking for a part-time studentermedhjælper (student assistant) role in the Copenhagen area, up to 90 hours per month on his student visa.'],
+  ['What security and AI projects has Atharv Vadehra built?', 'An Azure honeypot with LLM-assisted attack triage, a Proxmox homelab built with Terraform (Wazuh SIEM, Cowrie and Snare/Tanner honeypots, a MongoDB log store, Cloudflare Zero Trust access), a retrieval-augmented generation (RAG) and vector search system, and enterprise cloud security and TLS automation work.'],
   ['What does ARV stand for?', 'ARV is the short name and online handle of Atharv Vadehra.'],
 ];
 

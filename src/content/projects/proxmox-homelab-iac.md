@@ -14,6 +14,10 @@ technologies:
   - "Bash"
   - "systemd"
   - "gitleaks"
+  - "Zero Trust"
+  - "Least Privilege"
+  - "Secrets Management"
+  - "DevSecOps"
 github: "https://github.com/vadehraatharv7-hub/homelab"
 demo: "https://budget.atharvvadehra.dev"
 order: 2
