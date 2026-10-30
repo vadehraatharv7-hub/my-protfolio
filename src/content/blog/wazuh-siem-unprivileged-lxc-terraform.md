@@ -64,4 +64,4 @@ Next chapter: [the honeypots that feed it](/blog/honeypots-in-lxc-cowrie-snare-w
 
 ---
 
-*This article was written by AI.*
+*This article was written by AI, with Atharv in the loop, about work he did. [How this site is made](/about-this-site/).*

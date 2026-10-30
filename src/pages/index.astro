@@ -29,19 +29,20 @@ const jsonLd = [
 <Layout
   rawTitle
   type="profile"
-  title="Atharv Vadehra (ARV) — Cybersecurity & DevOps Engineer in Copenhagen"
+  title="Atharv Vadehra (ARV) — AI × Cybersecurity and DevOps in Copenhagen"
   description={DEFAULT_DESCRIPTION}
   jsonLd={jsonLd}
 >
   <section class="hero">
     <div class="container hero-grid">
       <div>
-        <p class="eyebrow">Cybersecurity · AI · DevOps · Cloud</p>
+        <p class="eyebrow">AI / ML × Cybersecurity · DevOps · Cloud</p>
         <h1>Atharv Vadehra</h1>
         <p class="alias muted">Also known as <strong>ARV</strong></p>
         <p class="lead">
-          I’m a cybersecurity MSc student at the Technical University of Denmark (DTU) with hands-on experience in
-          DevOps and cloud infrastructure. I build secure, automated systems, from SIEM and honeypot labs to LLM and RAG projects, and write about how they work.
+          I’m a cybersecurity MSc student at the Technical University of Denmark (DTU) and I’m building the bridge between
+          AI/ML and cyber security: using AI to defend systems, and securing the systems AI runs on. I back it with hands-on
+          DevOps and cloud experience, and I write about how it all works.
         </p>
         <p class="status"><span class="dot" aria-hidden="true"></span> Open to a <strong>studentermedhjælper</strong> role in Copenhagen · up to 90 hrs/month</p>
         <div class="actions">
@@ -58,7 +59,7 @@ const jsonLd = [
     <div class="container two-col">
       <div>
         <p class="eyebrow">About</p>
-        <h2>Security-minded engineer, built on infrastructure</h2>
+        <h2>Bridging AI and cybersecurity, built on infrastructure</h2>
       </div>
       <div class="about-copy">
         <p>
@@ -72,6 +73,41 @@ const jsonLd = [
         <p>
           I’m learning Danish (beginner) and I’m fluent in English. Outside of work I enjoy strategy games and cybersecurity fiction.
         </p>
+        <p>
+          This site is built and maintained with AI and a human in the loop. The work on it is mine; AI helps me do it better,
+          it doesn’t replace me. <a href={path('/about-this-site/')}>How this site is made →</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="ai-security">
+    <div class="container">
+      <div class="section-head">
+        <div><p class="eyebrow">AI × Cybersecurity</p><h2>Where the two meet</h2></div>
+        <a href={path('/blog/bridging-ai-ml-and-cybersecurity/')}>Why I care →</a>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h3>AI for security</h3>
+          <p class="muted">An LLM-based component reads honeypot attacker commands and classifies them by attack type, intent and severity, mapped to MITRE ATT&amp;CK. Around it sit a Wazuh SIEM with custom detection rules and a log store that tags every event as honeypot or production.</p>
+          <p><a href={path('/projects/ai-soc-azure-honeypot/')}>AI-SOC &amp; Azure honeypot →</a></p>
+        </div>
+        <div class="card">
+          <h3>Security for AI</h3>
+          <p class="muted">At Corover AI I designed secure GCP infrastructure aligned with SEBI requirements and automated SSL for 40+ AI services. My RAG project’s API is hardened with API keys, rate limiting and input sanitisation against prompt injection.</p>
+          <p><a href={path('/projects/cloud-security-architecture/')}>Cloud security &amp; SSL automation →</a></p>
+        </div>
+        <div class="card">
+          <h3>AI / ML foundations</h3>
+          <p class="muted">Retrieval-augmented generation, embeddings and vector search (FAISS, ChromaDB) behind production chatbot workflows, plus talks on DevOps vs MLOps and on MLOps and security infrastructure.</p>
+          <p><a href={path('/projects/rag-vector-search/')}>RAG + vector search →</a></p>
+        </div>
+        <div class="card">
+          <h3>Where I’m heading</h3>
+          <p class="muted">Bringing AI and machine learning deeper into detection and response, and learning to defend AI systems themselves. My honeypot and SIEM lab is the hands-on testbed for that.</p>
+          <p><a href={path('/projects/homelab-honeypots-lxc/')}>The honeypot lab →</a></p>
+        </div>
       </div>
     </div>
   </section>
@@ -181,6 +217,8 @@ const jsonLd = [
   .about-copy p { color: var(--text-muted); }
   .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
   .narrow { max-width: 760px; }
+  #ai-security .card h3 { margin-top: 0; }
+  #ai-security .card p:last-child { margin-bottom: 0; }
   .timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
   .job-head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
   .job h3 { margin: 0; } .org { margin: 2px 0 0; }

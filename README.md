@@ -1,6 +1,6 @@
 # Atharv Vadehra — Portfolio
 
-Personal portfolio and blog of **Atharv Vadehra (ARV)**, cybersecurity MSc student at the Technical University of Denmark (DTU) and DevOps / cloud engineer based in Copenhagen.
+Personal portfolio and blog of **Atharv Vadehra (ARV)**, cybersecurity MSc student at the Technical University of Denmark (DTU) building the bridge between AI/ML and cyber security, with a DevOps / cloud background, based in Copenhagen.
 
 **Live site:** https://atharvvadehra.dev
 

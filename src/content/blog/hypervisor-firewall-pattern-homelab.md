@@ -64,4 +64,4 @@ The code is in the [homelab repository](https://github.com/vadehraatharv7-hub/ho
 
 ---
 
-*This article was written by AI.*
+*This article was written by AI, with Atharv in the loop, about work he did. [How this site is made](/about-this-site/).*

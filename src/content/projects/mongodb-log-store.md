@@ -88,4 +88,4 @@ Related write-up: [Shipping Wazuh events to MongoDB with an insert-only account]
 
 ---
 
-*This project page was written by AI.*
+*This project page was written by AI, with Atharv in the loop, about work he did. [How this site is made](/about-this-site/).*

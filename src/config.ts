@@ -3,7 +3,7 @@ export const PERSON = {
   name: 'Atharv Vadehra',
   alias: 'ARV',
   alternateNames: ['ARV', 'Atharv Vadehra (ARV)', 'Atharv Vadehra ARV'],
-  jobTitle: 'Cybersecurity MSc student and DevOps / cloud engineer',
+  jobTitle: 'Cybersecurity MSc student building the bridge between AI/ML and cyber security, DevOps / cloud engineer',
   email: 'atharv@vadehra.me',
   location: 'Greater Copenhagen, Denmark',
   locality: 'Copenhagen',
@@ -25,9 +25,9 @@ export const PERSON = {
 } as const;
 
 export const SITE_TITLE = 'Atharv Vadehra (ARV)';
-export const SITE_TAGLINE = 'Cybersecurity MSc student at DTU and DevOps & cloud engineer';
+export const SITE_TAGLINE = 'Cybersecurity MSc student at DTU, bridging AI/ML and cyber security, with a DevOps & cloud background';
 export const DEFAULT_DESCRIPTION =
-  'Atharv Vadehra (ARV) is a cybersecurity MSc student at the Technical University of Denmark (DTU) and DevOps / cloud engineer in Copenhagen. Projects in cloud security, SIEM and detection engineering, honeypots, and AI systems (LLMs and RAG), plus write-ups and notes on cybersecurity and AI.';
+  'Atharv Vadehra (ARV) is a cybersecurity MSc student at DTU in Copenhagen with a DevOps and cloud background, building the bridge between AI/ML and cyber security: LLM-assisted threat triage, RAG, SIEM, honeypots and secure AI infrastructure.';
 
 export const CATEGORIES = {
   writeup: { label: 'Write-up', plural: 'Write-ups', blurb: 'Deep dives into projects I have built.' },

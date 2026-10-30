@@ -74,4 +74,4 @@ Next chapter: [keeping every event for later](/blog/wazuh-events-to-mongodb-inse
 
 ---
 
-*This article was written by AI.*
+*This article was written by AI, with Atharv in the loop, about work he did. [How this site is made](/about-this-site/).*

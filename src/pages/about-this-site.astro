@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { PERSON } from '../config';
+import { path } from '../lib/url';
+import { breadcrumbLd } from '../lib/schema';
+---
+
+<Layout
+  title="How this site is made"
+  description="This portfolio is built and maintained with AI and a human in the loop. The work and experience it describes are Atharv Vadehra's own."
+  jsonLd={[breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'How this site is made' }])]}
+>
+  <div class="container wrap">
+    <Breadcrumbs items={[{ name: 'Home', href: path('/') }, { name: 'How this site is made' }]} />
+    <p class="eyebrow">Transparency</p>
+    <h1>How this site is made</h1>
+    <p class="lead muted">
+      This site is built and maintained with AI, with me in the loop. The projects, experience and ideas on it are
+      mine and real. AI helps me do this better and faster; it does not stand in for me.
+    </p>
+
+    <div class="prose">
+      <h2>The short version</h2>
+      <ul>
+        <li><strong>The work is authentic.</strong> Every project here is something I built, from my own repositories and my own resume. The AI writes about my work; it does not invent it.</li>
+        <li><strong>AI is a tool I use to improve.</strong> I use an AI coding assistant (Claude) to draft write-ups, write and edit the site's code, check that it builds, and tighten wording.</li>
+        <li><strong>A human decides.</strong> I choose what to build, supply the source material, review the output, ask for corrections, and approve what gets published.</li>
+      </ul>
+
+      <h2>What the AI does</h2>
+      <ul>
+        <li>Reads my project repositories and documentation, and drafts the project pages and blog posts from them.</li>
+        <li>Writes and maintains the site's code (the pages, styling, search metadata and feeds).</li>
+        <li>Runs the build, checks that links work, and fixes layout problems such as dark-mode contrast.</li>
+        <li>Suggests keywords and wording, which I accept, change or reject.</li>
+      </ul>
+
+      <h2>What I do</h2>
+      <ul>
+        <li>Build the projects themselves: the infrastructure, the honeypots, the detection rules and the rest.</li>
+        <li>Decide the story: what each project is for, what I'm trying to learn, and where I want to go next.</li>
+        <li>Review and correct. If a draft is hard to read, too technical or not what I mean, I send it back.</li>
+        <li>Approve every publish. Nothing goes live without my say-so.</li>
+      </ul>
+
+      <h2>Guardrails against making things up</h2>
+      <ul>
+        <li>Content is written only from facts in my repositories, my resume and what I tell the assistant. Where something is unknown, it should be left out or marked as a plan.</li>
+        <li>No invented results. Posts about the honeypots do not quote attack numbers I haven't measured, and the page for my unfinished VLAN design says it has not run on real hardware.</li>
+        <li>Claims are checked against my resume. For example, my resume says I collaborated on the RAG pipeline, so the site says that rather than claiming I built it alone.</li>
+        <li>Writing that comes from the AI is labelled. Each write-up ends with a note saying so.</li>
+      </ul>
+
+      <h2>Why I do it this way</h2>
+      <p>
+        I'm building towards the point where AI and cybersecurity meet, so it would be odd to avoid AI in my own work. I also
+        think the honest way to use it is in the open: it makes me faster and better, and it works best when a person who
+        understands the subject is checking it. I want to be someone who can use AI well, not someone replaced by it.
+      </p>
+
+      <h2>Spot a mistake?</h2>
+      <p>
+        Tell me and I'll fix it. You can reach me at <a href={`mailto:${PERSON.email}`}>{PERSON.email}</a> or on
+        <a href={PERSON.linkedin} rel="me noopener" target="_blank"> LinkedIn</a>. The site's source is on
+        <a href={PERSON.github} rel="me noopener" target="_blank"> GitHub</a>.
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .wrap { padding-top: 48px; padding-bottom: 32px; }
+  .lead { font-size: 1.1rem; max-width: 680px; margin-bottom: 32px; }
+  .prose { max-width: var(--prose); margin-left: 0; margin-right: 0; }
+</style>

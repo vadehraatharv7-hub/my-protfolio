@@ -85,4 +85,4 @@ Related write-up: [Cowrie and Snare/Tanner in LXC, with Wazuh rules](/blog/honey
 
 ---
 
-*This project page was written by AI.*
+*This project page was written by AI, with Atharv in the loop, about work he did. [How this site is made](/about-this-site/).*

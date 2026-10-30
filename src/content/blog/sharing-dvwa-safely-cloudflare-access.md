@@ -53,4 +53,4 @@ Next chapter: [giving the lab eyes with a SIEM](/blog/wazuh-siem-unprivileged-lx
 
 ---
 
-*This article was written by AI.*
+*This article was written by AI, with Atharv in the loop, about work he did. [How this site is made](/about-this-site/).*

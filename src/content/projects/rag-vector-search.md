@@ -1,7 +1,7 @@
 ---
 title: "RAG + Vector Search System"
 tagline: "High-performance embedding and retrieval pipeline with FAISS indexing, ChromaDB, and MongoDB storage."
-description: "Architected and built an enterprise Retrieval-Augmented Generation (RAG) pipeline designed for low-latency contextual document search. Features chunking and embedding pipelines, FAISS vector indexing, ChromaDB semantic retrieval, and MongoDB metadata storage to power real-time AI assistant workflows."
+description: "Collaborated on an enterprise Retrieval-Augmented Generation (RAG) pipeline designed for low-latency contextual document search. Features chunking and embedding pipelines, FAISS vector indexing, ChromaDB semantic retrieval, and MongoDB metadata storage to power real-time AI assistant workflows."
 category: "Distributed Systems"
 technologies:
   - "Python"

@@ -20,7 +20,7 @@ const year = new Date().getFullYear();
       <li><a href={path('/rss.xml')}>RSS</a></li>
     </ul>
   </div>
-  <div class="container legal small faint">© {year} {PERSON.name}. Built with Astro.</div>
+  <div class="container legal small faint">© {year} {PERSON.name}. Built with Astro. Built and maintained with AI and a human in the loop; the work it describes is mine. <a href={path('/about-this-site/')}>How this site is made</a>.</div>
 </footer>
 
 <style>
@@ -32,4 +32,5 @@ const year = new Date().getFullYear();
   a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; }
   a:hover { color: var(--accent); }
   .legal { margin-top: 28px; }
+  .legal a { font-size: inherit; text-decoration: underline; }
 </style>

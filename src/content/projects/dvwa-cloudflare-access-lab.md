@@ -85,4 +85,4 @@ Related write-up: [Sharing a deliberately vulnerable app safely](/blog/sharing-d
 
 ---
 
-*This project page was written by AI.*
+*This project page was written by AI, with Atharv in the loop, about work he did. [How this site is made](/about-this-site/).*

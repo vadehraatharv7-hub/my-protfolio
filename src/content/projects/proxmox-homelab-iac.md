@@ -126,4 +126,4 @@ Related write-ups: [Hosting an app at home with zero open ports](/blog/budget-tr
 
 ---
 
-*This project page was written by AI.*
+*This project page was written by AI, with Atharv in the loop, about work he did. [How this site is made](/about-this-site/).*

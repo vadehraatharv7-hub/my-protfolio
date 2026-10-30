@@ -58,4 +58,4 @@ Previous chapter: [the honeypots](/blog/honeypots-in-lxc-cowrie-snare-wazuh/). D
 
 ---
 
-*This article was written by AI.*
+*This article was written by AI, with Atharv in the loop, about work he did. [How this site is made](/about-this-site/).*
