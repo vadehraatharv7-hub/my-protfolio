@@ -19,6 +19,10 @@ demo: "https://security.atharvvadehra.dev"
 order: 3
 ---
 
+## Why I built this
+
+I want to understand how attacks look from the defender's side. That needs one place where events from many machines are collected, checked against rules and searchable, which is what a security operations centre does. I wanted a small one of my own, rebuildable from code and safe enough not to become the most attractive target in my lab. The story is in [A lab you can't see into teaches you nothing](/blog/wazuh-siem-unprivileged-lxc-terraform/).
+
 ## What it is
 
 The monitoring core of my homelab. [Wazuh](https://wazuh.com/) collects logs and security events from agents on my machines, runs them through detection rules and shows the results in a dashboard. Here it runs as one unprivileged Debian 12 container (4 cores, 6 GB RAM, 50 GB disk) built entirely by Terraform.

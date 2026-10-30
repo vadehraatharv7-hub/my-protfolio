@@ -19,6 +19,10 @@ demo: "https://budget.atharvvadehra.dev"
 order: 2
 ---
 
+## Why I built this
+
+I'm studying cybersecurity, and I wanted a place to practise it for real. This repository is the foundation of my homelab: I host my own app on the internet, safely, and everything is code, so I can rebuild any part from scratch. The rule I set myself was no open ports on my router and no server I'm afraid to touch. The other five projects in this section are built on the same ideas. The story of how they connect is in [Building a homelab where nothing is trusted](/blog/hypervisor-firewall-pattern-homelab/).
+
 ## What it is
 
 [`homelab`](https://github.com/vadehraatharv7-hub/homelab) is the repository that builds the servers I run at home. Everything is Terraform: a container is created, configured, firewalled, published and backed up from code, so I can destroy one and rebuild it the same way. It is public on purpose, because the code is the portfolio, which means the repository is also an exercise in keeping secrets out of version control.

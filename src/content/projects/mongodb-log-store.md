@@ -16,6 +16,10 @@ github: "https://github.com/vadehraatharv7-hub/homelab/tree/main/projects/logsto
 order: 9
 ---
 
+## Why I built this
+
+Learning from honeypots means asking questions I did not think of at the start, weeks or months later. I wanted my honeypots to have a memory: a durable record of every event, tagged so that decoy noise never mixes with real machines, and hard to tamper with even if the Wazuh machine is taken over. The story is in [I wanted my honeypots to have a memory](/blog/wazuh-events-to-mongodb-insert-only-shipper/).
+
 ## Why a separate log store
 
 Wazuh's own indexer is tuned for dashboards and rolls data over. I wanted a plain, queryable, long-term record of *everything* the honeypots see, not only what matched a rule, so that I can reanalyse old traffic with new ideas. Wazuh archive files older than seven days are purged locally; MongoDB is the long-term store.

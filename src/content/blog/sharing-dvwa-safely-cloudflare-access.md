@@ -1,6 +1,6 @@
 ---
-title: "Sharing a deliberately vulnerable app safely with Cloudflare Access and a hypervisor firewall"
-description: "How I let friends practise on DVWA without a VPN: a Terraform-built tunnel and Cloudflare Access email PIN in front, an unprivileged LXC and a hypervisor firewall behind."
+title: "I wanted friends to practise hacking on my lab, without letting them near my network"
+description: "Why I host a deliberately vulnerable web app (DVWA) for others to learn on, and how I share it safely using Cloudflare Access, an unprivileged container and a hypervisor firewall."
 date: 2026-10-30
 category: writeup
 tags: ["DVWA", "Cloudflare Access", "Terraform", "Proxmox", "Web security", "Homelab"]
@@ -15,51 +15,41 @@ sources:
 draft: false
 ---
 
-**TL;DR:** DVWA is a web app built to be hacked, with a public default login. I run it in a firewalled, unprivileged container and share it through a Cloudflare Tunnel guarded by Cloudflare Access. A guest needs a browser and an email address; I add or remove them with one line of Terraform.
+**TL;DR:** The best way I know to learn web security is to attack something legal. I wanted other people to be able to do that on my lab too, so I set up DVWA (a web app built to be hacked) and worked out how to share it without giving anyone access to my network. This is chapter two of my [homelab story](/blog/hypervisor-firewall-pattern-homelab/).
 
-## The problem
+## What I was trying to do
 
-Learning web exploitation needs a target. Running DVWA on your own laptop is fine, but I wanted friends and classmates to try the same lab, and I did not want to add them to my Tailscale network or open a port. Putting DVWA directly on the internet would hand out an open shell, since command injection and file upload are exactly what it teaches.
+Practising on your own laptop is fine, but it's more fun, and you learn more, with other people. I wanted classmates and friends to be able to open a link, sign in, and try SQL injection or command injection against a real target.
 
-## Design
+The catch is that DVWA is *meant* to be exploitable. It even ships with a public login, `admin` / `password`. If I put it on the internet as it is, I'd be handing strangers a shell on a machine that sits next to my other projects. So the real project wasn't "install DVWA". It was "invite people in without letting the danger out".
 
-```text
-guest ─▶ dvwa.example.com ─▶ Cloudflare Access (one-time PIN to an allowed email)
-                              ─▶ tunnel opened from the container ─▶ Apache on 127.0.0.1
-```
+## My approach: two separate protections
 
-Two layers protect the home network. The **login wall** controls *who* reaches DVWA. The **containment** limits *what DVWA can reach* if somebody gets a shell anyway.
+I thought about it as two different questions.
 
-### The login wall
+**Who can get in?** Only people I invite. A guest opens the link, types their email address, gets a one-time code, and they're through. They don't need to install anything or join my VPN. Cloudflare Access handles that. To invite someone I add their address to a list and re-run Terraform; to remove them I delete it and re-run.
 
-Terraform creates the whole chain: the tunnel, its configuration, a proxied CNAME to `<tunnel-id>.cfargotunnel.com`, an Access policy listing allowed emails (or whole domains), and the Access application for the hostname. Because Terraform creates the tunnel, there is no token to copy from the dashboard.
+**What if someone gets out?** I assume they will. DVWA teaches command injection and file upload, so a guest *will* get a shell inside the container. That shell has to be useless:
 
-Two safeguards live in the code:
+- The container is unprivileged, so "root" inside is an ordinary user on the host.
+- A firewall on the hypervisor, outside the container's reach, blocks it from my home network, my other containers and my private VPN. It can reach the public internet only.
+- There's nothing valuable inside: no VPN credentials, no keys, just a throwaway database password.
+- If a guest breaks the app, I reset it from DVWA's setup page, or rebuild the container.
 
-- The DNS record `depends_on` the Access application, so the public name can never exist before the login wall does.
-- A `check` block fails the apply if sharing is on but the guest list is empty, which would otherwise create a site nobody can open.
+## Small details I'm proud of
 
-Revoking a guest is removing their address and re-applying. Sessions last 24 hours by default.
+- The public DNS name can't be created until the login wall exists, because I made it depend on the Access application. There's no window where the site is open.
+- If sharing is on but the guest list is empty, Terraform refuses to apply, instead of quietly creating a site nobody can open.
 
-### The containment
+## What I learned
 
-I assume a guest gets a shell. So:
+Treat "who gets in" and "what happens if someone gets out" as separate problems, and solve both. Also, the Proxmox Terraform provider can't write firewall rules, so I render the rule file and copy it to the host. I now reuse that approach across every project.
 
-- The container is **unprivileged**: root inside is an ordinary user on the host.
-- The **Proxmox firewall** runs outside the container. Inbound is SSH and HTTP from the host only. Outbound is DNS, NTP, web and the tunnel port, to the public internet only. Private ranges, Tailscale addresses and link-local ranges are dropped first, so it cannot reach my LAN, my other containers or my tailnet.
-- Apache and MariaDB listen on **loopback**, and the tunnel is outbound-only.
-- The container holds **no secrets** beyond a random database password: no Tailscale, no deploy user.
-- Anything broken is undone with DVWA's Create / Reset Database page, or by recreating the container.
+## What I'd change next
 
-## A gotcha worth knowing
+If lots of people used it, I'd give each person their own container so one guest's mess doesn't affect another. I'd also tighten outbound traffic further, since DVWA doesn't need the internet once it's installed.
 
-Per-container rules are ignored until the Proxmox datacenter firewall is on, and the Terraform provider cannot write firewall rules at all. So I render the rule file in Terraform and copy it to `/etc/pve/firewall/<vmid>.fw` over SSH, with a destroy-time provisioner to delete it. That approach is the shared pattern for every other stack.
-
-## Results and what I would change
-
-Guests get a working lab with no software to install and I get a one-line way to grant or revoke access. If I ran this for a larger group I would add a per-guest container so one person's reset does not affect another, and restrict outbound web further, since DVWA does not need to reach the internet after installation.
-
-The container code is in the [homelab repository](https://github.com/vadehraatharv7-hub/homelab/tree/main/projects/dvwa), with a summary on the [DVWA project page](/projects/dvwa-cloudflare-access-lab/).
+Next chapter: [giving the lab eyes with a SIEM](/blog/wazuh-siem-unprivileged-lxc-terraform/). The details are on the [project page](/projects/dvwa-cloudflare-access-lab/).
 
 ---
 

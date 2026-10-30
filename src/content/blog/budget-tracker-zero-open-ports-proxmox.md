@@ -1,6 +1,6 @@
 ---
-title: "Hosting an app at home with zero open ports: Terraform, Cloudflare Tunnel and Tailscale"
-description: "How I run my Budget Tracker on a Proxmox LXC with no router port forwards, deploy to it from GitHub Actions through Tailscale SSH, and roll back automatically when a deploy is unhealthy."
+title: "I wanted to host my own app at home without opening a single port"
+description: "Why I self-host my Budget Tracker on a Proxmox container, how I made it reachable without port forwarding, and how I deploy and roll back safely using Terraform, Cloudflare Tunnel and Tailscale."
 date: 2026-10-30
 category: writeup
 tags: ["Terraform", "Proxmox", "Cloudflare Tunnel", "Tailscale", "GitHub Actions", "Homelab"]
@@ -17,62 +17,41 @@ sources:
 draft: false
 ---
 
-**TL;DR:** My Budget Tracker app runs in an unprivileged Proxmox container at home and is reachable at budget.atharvvadehra.dev without opening a single port on my router. Terraform builds the container, Cloudflare Tunnel publishes it, and GitHub Actions deploys to it over Tailscale SSH with a user that can run exactly one command.
+**TL;DR:** I built a small Budget Tracker app and wanted to run it myself, at home, as a real service at budget.atharvvadehra.dev. The challenge I set myself: do it without opening any port on my router and without a server I'd be afraid to touch. This is the first chapter of my [homelab story](/blog/hypervisor-firewall-pattern-homelab/).
 
-## The problem
+## What I was trying to do
 
-I wanted to self-host an app I use every day, and I wanted the setup to be something I could rebuild from code, not a pet server I was afraid to touch. Self-hosting at home usually means port-forwarding, which exposes the home IP address and puts the router in front of the internet. I also wanted CI deploys without storing an SSH key in GitHub.
+I'm studying cybersecurity, and I didn't want my first "real" project to be a toy. The most honest test I could think of was to host something of my own, put it on the internet, and see what it takes to do that responsibly.
 
-## Design
+I set three goals:
 
-```text
-Users ──HTTPS──▶ Cloudflare ──▶ tunnel (opened outbound by cloudflared) ──▶ app on 127.0.0.1:3000
-GitHub Actions ──Tailscale SSH as tag:ci──▶ deploy user ──▶ sudo budget-update <sha>
-Terraform on my Mac ──Proxmox API token + SSH──▶ the host
-```
+- **Nothing exposed at home.** Port forwarding puts your router in front of the internet and reveals your home IP address. I wanted to avoid both.
+- **Rebuildable from code.** If the server dies, I want one command to bring it back, not a weekend of remembering what I clicked.
+- **Deploys I can trust.** When I push code, it should reach the server automatically, and if it breaks, it should undo itself.
 
-**Publishing.** `cloudflared` runs inside the container and dials out to Cloudflare. Cloudflare serves the hostname and the HTTPS certificate. The router forwards nothing, and the home IP never appears in DNS. The app itself binds to `127.0.0.1`, so even a wrong firewall rule would expose nothing on the container's LAN address.
+## How I solved it, in plain terms
 
-**Deploys.** Tailscale is used for one job only. The runner joins the tailnet for the length of the workflow as `tag:ci`, using an OAuth client, so no SSH key is stored in GitHub. The tailnet policy lets that tag reach the container on port 22 as user `deploy` and nothing else. The `deploy` user has no password and no authorised keys, and `sudoers` allows it a single command: `budget-update`.
+**Getting traffic in.** Instead of letting the internet connect to my house, the container connects *out* to Cloudflare, and Cloudflare hands visitors to it through that tunnel. Visitors see my hostname and a proper HTTPS certificate. My router forwards nothing. The app itself only listens on the container's own loopback address, so even a mistake elsewhere wouldn't expose it.
 
-Keeping publishing (Cloudflare) and deploying (Tailscale) on separate paths means an outage or misconfiguration of one does not affect the other.
+**Getting code out.** GitHub Actions deploys to the container over Tailscale for the duration of the job, using a special account that can run exactly one command: update the app. No SSH key sits in GitHub. I kept publishing (Cloudflare) and deploying (Tailscale) on separate paths on purpose, so a problem with one can't take out the other.
 
-**The container.** It is an unprivileged Debian 12 LXC (root inside is an ordinary user on the host) on a private NAT bridge. Nesting is switched on only because systemd's service sandboxing needs it. A NAT bridge was a practical choice because my host's uplink is Wi-Fi, which cannot be bridged. The cost is that nothing outside the host reaches the container except through the tunnel or Tailscale, which fits the goal anyway.
+**Undoing mistakes.** The update script builds the new version on the side, swaps it in, checks the app's health endpoint, and restores the previous version if the check fails.
 
-## The Terraform stack
+**Building it all.** Terraform creates the container, installs everything and sets up the tunnel. The first time I applied it with no Cloudflare credentials at all, then added the tunnel and CI access in layers.
 
-The stack is layered, and later layers switch on only when credentials exist:
+## What I learned
 
-1. `template.tf` finds and downloads the newest Debian 12 template on the host.
-2. `lxc.tf` creates the container with a static IP and key-only SSH.
-3. `app.tf` jumps through the Proxmox host and runs `bootstrap.sh`, which installs Node, creates the `budget` and `deploy` users, writes the sudoers rule and the `budget-update` script, and installs Tailscale and `cloudflared`.
-4. `cloudflare.tf` adds a login rate limit and, optionally, a Cloudflare Access login wall.
+- Security is mostly about limiting what each piece is allowed to do. The deploy account can do one thing. The container is unprivileged. The app can't be reached from the LAN.
+- Choices are shaped by real constraints. My host's Wi-Fi can't be bridged, so I used a private NAT network, which fit my goals anyway.
+- A backup you haven't restored isn't a backup. I restored mine to a new container and checked the app came back with its data.
 
-Resources use `count = local.cf_enabled ? 1 : 0`, so the first `terraform apply` works with no Cloudflare token at all. That is how I first applied it: container first, tunnel and CI access afterwards.
+## What's still not great
 
-## Safe deploys with automatic rollback
+- Backups live on the same disk as the container. An off-host copy is next.
+- Terraform's state is only on my Mac.
+- It's a single machine, so there's no failover.
 
-`budget-update <sha>` fetches the commit, runs `npm ci` and builds into `dist.next`. It then swaps the build into place, restarts the service and calls the health endpoint. If the check fails it restores the previous build and the previous commit. To roll back by hand, I re-run the Deploy workflow with an older SHA.
-
-## Protecting the login
-
-The app has its own password login. Cloudflare's free plan allows one rate-limit rule, so I use it where it matters: at most five `POST /api/login` requests per ten seconds per visitor. The stack can also place Cloudflare Access in front of the app, including a service token for the one path an iPhone Shortcut calls (`/api/shortcuts`), because a Shortcut cannot do an interactive login.
-
-## Trade-offs and quirks
-
-- The host's Wi-Fi uplink cannot be bridged, so NAT was the only practical network. The cost is that machines outside the host reach the container only through the tunnel or Tailscale.
-- Proxmox returns container descriptions with a trailing newline, which made Terraform want to change them on every plan. `lifecycle { ignore_changes }` fixes that, and it also stops a newer template from rebuilding a running container.
-
-## Results and what I would change
-
-I ran a backup restore to a new container ID and the app came back with its data, which is the only backup test that counts. The gaps I still want to close:
-
-- Backups are on the same disk as the container. An off-host copy is next.
-- The edge rate limit needs a narrowly scoped token (Zone Read, Zone WAF Edit) and is not applied yet.
-- Terraform state is local. A remote backend would let me recover from losing my Mac without importing resources.
-- It is one host, so there is no high availability.
-
-The code is in the [homelab repository](https://github.com/vadehraatharv7-hub/homelab), and the project summary is on the [Proxmox Homelab as Code](/projects/proxmox-homelab-iac/) page.
+Next chapter: [how to share something deliberately vulnerable, safely](/blog/sharing-dvwa-safely-cloudflare-access/). The technical details are on the [project page](/projects/proxmox-homelab-iac/).
 
 ---
 

@@ -122,8 +122,11 @@ p { margin: 0 0 1em; }
 .prose th { background: var(--bg-sunken); }
 .prose img { border-radius: 10px; }
 .prose hr { border: 0; border-top: 1px solid var(--border); margin: 2.5em 0; }
-.astro-code, .astro-code span { color: var(--shiki-light); background-color: var(--shiki-light-bg); }
-:root[data-theme='dark'] .astro-code, :root[data-theme='dark'] .astro-code span { color: var(--shiki-dark); background-color: var(--shiki-dark-bg); }
+/* Shiki writes an inline background on <pre>, so override it with !important; spans must stay transparent. */
+.astro-code { background-color: var(--code-bg) !important; }
+.astro-code, .astro-code span { color: var(--shiki-light) !important; }
+.astro-code span { background-color: transparent !important; }
+:root[data-theme='dark'] .astro-code, :root[data-theme='dark'] .astro-code span { color: var(--shiki-dark) !important; }
 
 @media (max-width: 640px) {
   body { font-size: 16px; }

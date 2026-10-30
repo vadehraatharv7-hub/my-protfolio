@@ -1,6 +1,6 @@
 ---
-title: "Running a Wazuh SIEM in an unprivileged LXC with Terraform"
-description: "Building Wazuh all-in-one in a firewalled Proxmox container with Terraform, publishing it behind Cloudflare Access, and labelling every event as decoy or production through agent groups."
+title: "A lab you can't see into teaches you nothing: why I built my own SIEM"
+description: "Why I run Wazuh as the eyes of my homelab, and how I built it from code: a firewalled container, a login-protected dashboard, and labels that tell decoys apart from real machines."
 date: 2026-10-30
 category: writeup
 tags: ["Wazuh", "SIEM", "Terraform", "Proxmox", "Cloudflare Access", "Detection engineering"]
@@ -15,51 +15,52 @@ sources:
 draft: false
 ---
 
-**TL;DR:** I run Wazuh (indexer, server and dashboard) in one unprivileged container at security.atharvvadehra.dev. Terraform builds it, firewalls it from the hypervisor, and puts a Cloudflare Access login in front of it. Agent groups tell Wazuh whether a machine is a decoy or a real host, and that label travels with every event.
+**TL;DR:** Once I had things running in my lab, I realised I couldn't tell what was happening inside them. A SIEM fixes that: it collects logs from every machine and flags the suspicious ones. I built Wazuh in a container from code, put a login in front of it, and taught it the difference between my decoys and my real machines. This is chapter three of my [homelab story](/blog/hypervisor-firewall-pattern-homelab/).
 
-## The problem
+## What I was trying to do
 
-A honeypot without monitoring only collects dust. I needed a SIEM to receive logs from the decoys and, later, from real machines I run on the internet, and I wanted it reproducible, reachable from anywhere by me only, and not a new hole in my network.
+My goal is to understand how attacks look from the defender's side. That needs a place where events from many machines end up, get checked against rules, and can be searched. In a company this is the security operations centre. I wanted a small one of my own.
 
-## Design
+Three things mattered to me:
 
-```text
-you    ─▶ security.atharvvadehra.dev ─▶ Cloudflare Access (email PIN) ─▶ tunnel ─▶ dashboard on 127.0.0.1:443
-agents ─▶ manager :1514 events / :1515 enrolment   (only from the addresses in agent_sources)
-```
+- **It has to be reproducible.** If I break it while experimenting, I want to rebuild it in one command, not repair it by hand.
+- **It has to be safe.** A SIEM holds logs from everything, so it's a very attractive target. I shouldn't build the most sensitive machine in my lab and then leave it open.
+- **It has to know what it's looking at.** Alerts from a honeypot and alerts from a machine I actually care about are completely different things.
 
-**Build.** One unprivileged Debian 12 container with 4 cores, 6 GB RAM and 50 GB disk. Wazuh's minimum is 4 GB, and the extra 2 GB gives headroom for a handful of agents. `app.tf` runs the all-in-one installer over SSH through the Proxmox host. A first apply takes 10 to 20 minutes, almost all of it the installer.
+## How I built it
 
-**Access.** Two logins: Cloudflare Access (an email PIN for anyone on the guest list) and then Wazuh's own `admin` login. The installer generates the Wazuh password and it stays on the container, not in Terraform state.
+I chose [Wazuh](https://wazuh.com/), an open-source SIEM, and ran it in one container with 4 cores, 6 GB of RAM and 50 GB of disk. Terraform builds the container, runs the installer, and sets up access, so the whole thing is a single `terraform apply` (the first run takes 10 to 20 minutes, mostly the installer).
 
-**Network.** The hypervisor firewall drops everything by default. The dashboard and SSH are open to the Proxmox host only. Agent ports are open only to listed addresses, so with an empty `agent_sources` nothing can enrol. Outbound is DNS, NTP, the MongoDB log store (placed above the private-range drops), and the public web.
+**Who can see it.** It's published at security.atharvvadehra.dev, but behind two doors: Cloudflare Access (an emailed one-time code, only for people I list) and then Wazuh's own login.
 
-## Agent groups: what is this machine?
+**What it can reach.** The same containment as every other container in the lab: a firewall on the hypervisor that blocks everything by default. Only my listed machines can send it logs, and it can only talk out to a few places it needs.
 
-The part I like most is how Wazuh learns what each agent is. Terraform creates two groups with their own configuration:
+## The part I like most: labels
 
-| Group | Meaning | Labels added to every event |
+Wazuh groups the machines that report to it. I made two groups:
+
+| Group | Meaning | Label on every event |
 |---|---|---|
-| `honeypots` | Intentional decoys | `decoy=true`, `origin=honeypot` |
-| `internet-hosts` | Real machines I run | `decoy=false`, `origin=production` |
+| `honeypots` | Fake machines that exist to be attacked | `decoy=true`, `origin=honeypot` |
+| `internet-hosts` | Real machines I run on the internet | `decoy=false`, `origin=production` |
 
-For decoys, the hardening benchmark (SCA) and rootcheck are switched off, since scoring a honeypot against a hardening policy it is meant to violate only creates noise. Classification depends on where I enrolled the machine, not on a heuristic. A real host joins with `WAZUH_AGENT_GROUP=internet-hosts`. The group files are validated with `verify-agent-conf` before use.
+So a machine is classified by where I *enrolled* it, not by a guess. That means a login attempt on a honeypot is noise I want to study, while one on a real host is something I want to be woken up for. For the decoys I also turned off the hardening checks, since grading a trap against a security checklist is meaningless.
 
-## Rules that cannot break the manager
+## Rules that can't break the system
 
-My custom rules (IDs 100100 to 100199) live in an XML file that Terraform copies to the manager. The install step then runs `wazuh-analysisd -t`. If the test fails, the file is **deleted** and the apply fails, so a typo cannot leave the manager down. Only after a clean test does it restart the service. The rules themselves are described in the [honeypot write-up](/blog/honeypots-in-lxc-cowrie-snare-wazuh/).
+I write my own detection rules (more in the [honeypot post](/blog/honeypots-in-lxc-cowrie-snare-wazuh/)). Installing them is deliberately careful: the file is tested before use, and if it doesn't load it's deleted and the install stops. A typo should never take my SIEM offline.
 
-## What went wrong
+## What I learned
 
-- **A host kernel setting.** The indexer needs `vm.max_map_count >= 262144`, and a container cannot change that. The script now checks it and stops with a clear message instead of failing deep inside the installer.
-- **Partial upgrades.** Unattended upgrades could split Wazuh's three packages across versions, so they are on `apt-mark hold`, and changing `wazuh_version` does not upgrade an existing install.
-- **Failed installs.** The recovery is `bash wazuh-install.sh -u` on the container and `terraform apply -replace=null_resource.app`.
+- A good lab needs a way to see inside it. Building the tools is half the project; watching them is the other half.
+- Real systems have prerequisites you only find by running them. The search engine inside Wazuh needs a host-wide kernel setting that a container can't change, so my script now checks for it and says so clearly.
+- Pinning versions matters. The three Wazuh packages are held so an automatic update can't split them.
 
-## Results and what I would change
+## What I'd improve
 
-I now have a SIEM that I can destroy and recreate from code, with every event carrying its origin. Agent enrolment currently uses Wazuh's default of no password, protected only by the firewall's `agent_sources`. Enrolment passwords would be a cheap improvement. The TLS between the tunnel and the dashboard uses Wazuh's own certificate over loopback with verification off, which is acceptable only because it never leaves the machine.
+New agents currently enrol without a password; only the firewall protects that step. Adding enrolment passwords is a cheap win.
 
-See the [Wazuh project page](/projects/wazuh-siem-homelab/) and the [code](https://github.com/vadehraatharv7-hub/homelab/tree/main/projects/wazuh).
+Next chapter: [the honeypots that feed it](/blog/honeypots-in-lxc-cowrie-snare-wazuh/). Details are on the [project page](/projects/wazuh-siem-homelab/).
 
 ---
 

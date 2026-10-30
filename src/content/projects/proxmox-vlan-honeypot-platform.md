@@ -18,6 +18,10 @@ github: "https://github.com/vadehraatharv7-hub/homelab/tree/main/projects/honeyp
 order: 11
 ---
 
+## Why I built this
+
+A honeypot is a machine you expect to lose, so the dashboard and database around it must not be lost with it. The question behind this design: how do I let the traps be compromised without giving an attacker any path to the data? It is also where I practise network segmentation, automated builds, and proving that isolation works. It is the larger sibling of my [container honeypots](/projects/homelab-honeypots-lxc/), and the story is in [The bigger design](/blog/vlan-honeypot-platform-terraform-ansible/).
+
 ## What it is
 
 The Proxmox build of the honeypot platform I first ran on Azure: two honeypots, the SecDash dashboard and a MongoDB database, separated into two network zones. The Azure version stays as it is; this one targets a Proxmox host that has a VLAN-aware bridge and a router.

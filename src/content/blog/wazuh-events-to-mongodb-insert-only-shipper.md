@@ -1,6 +1,6 @@
 ---
-title: "Shipping every Wazuh event to MongoDB with an insert-only account"
-description: "A small Python shipper copies Wazuh archives and alerts into MongoDB, tags each record honeypot or production, never duplicates a line, survives log rotation, and uses a write-only database role."
+title: "I wanted my honeypots to have a memory: keeping every event in MongoDB"
+description: "Why I keep every Wazuh event in a separate MongoDB database, so I can ask new questions of old attacks later, and how I made it tamper-resistant with an insert-only account."
 date: 2026-10-30
 category: writeup
 tags: ["MongoDB", "Wazuh", "Python", "Logging", "Least privilege", "Terraform"]
@@ -17,60 +17,44 @@ sources:
 draft: false
 ---
 
-**TL;DR:** Wazuh keeps data for dashboards. I wanted a durable record of every event, not only alerts, tagged by where it came from. A small Python service on the manager follows Wazuh's JSON logs and writes them to MongoDB 7.0 using an account that can insert but never read or delete.
+**TL;DR:** Dashboards show you today. I wanted to be able to go back months later with a new idea and ask, "what else did that attacker do?" So I built a separate database that keeps every event my honeypots and servers produce, and made it hard to tamper with. This is chapter five of my [homelab story](/blog/hypervisor-firewall-pattern-homelab/).
 
-## The problem
+## What I was trying to do
 
-A honeypot is only useful if you can go back later with a new question: which usernames were tried before last week, which commands followed a successful login. Wazuh's archive files rotate and are purged after seven days locally, and the index is built for dashboards. I wanted a plain database that holds everything, separated by origin so honeypot noise never mixes with production signals.
+The point of running honeypots is learning, and learning means asking questions you didn't think of at the start. Which usernames were tried before last week? What commands came right after a successful login? Does one address show up on both my decoys?
 
-## Design
+Wazuh is great for live monitoring, but it rotates its files and purges the local archive after seven days, and its search index is built for dashboards. I wanted a plain, durable record of everything, not only the events that triggered an alert, with one extra rule: honeypot noise must never be mixed up with events from real machines.
 
-```text
-agents ─▶ Wazuh manager ─▶ archives.json ─┐
-          (labels each agent)             ├─▶ shipper ─▶ MongoDB ─┬─ logs.events (every decoded event)
-                          alerts.json ────┘                       └─ logs.alerts (what matched a rule)
-```
+## What I built
 
-MongoDB sits in its own unprivileged container. The hypervisor firewall lets only the Wazuh manager connect to port 27017, and lets nothing reach the LAN.
+Two small pieces.
 
-Each stored document is Wazuh's own JSON plus `ts` (a real BSON date, indexed), `origin` (`honeypot`, `production`, `wazuh-manager` or `unlabelled`) and `ingested_at`. The origin comes from the agent's group label, so classification is decided when a machine is enrolled.
+**A MongoDB database** in its own container, which only the Wazuh machine is allowed to talk to. Two collections: `events` for everything Wazuh decodes, and `alerts` for what matched a rule. Every record gets a clear tag, `honeypot` or `production`, taken from the group the machine was enrolled in.
 
-## Shipper behaviour
+**A small Python service** on the Wazuh machine that follows its log files and copies each line into MongoDB. I wanted it to be boring and reliable:
 
-The service is one Python file using PyMongo, run by systemd as an unprivileged user. The properties that matter:
+- It never stores the same line twice, because the record's ID is a hash of the line. If it crashes and replays, nothing duplicates.
+- It only remembers where it got to after the database has confirmed the write, so an outage causes a replay, never a gap.
+- It copes with daily log rotation and files being truncated.
 
-- **Idempotent writes.** The `_id` is the SHA-1 of the raw log line. Re-sending a batch inserts nothing twice. `insert_many(ordered=False)` is used, and duplicate-key errors (code 11000) are the replay protection working; any other write error is raised.
-- **Commit after acknowledgement.** The file offset is saved only after MongoDB acknowledges the batch, using an atomic temp-file-and-rename. A crash or outage causes a replay, never a gap.
-- **Rotation-aware.** It stores the inode with the offset. If the path now points at a different inode it follows the new file, and if the file shrinks it starts over.
-- **Partial lines wait.** A line with no trailing newline is left alone until the writer finishes it.
-- **Clean shutdown** on SIGTERM and SIGINT.
+## The security idea I'm happiest with
 
-## Three accounts, one of them blind
-
-| User | Can | Used by |
-|---|---|---|
-| `logshipper` | Insert only (custom role `logInsert`) | The shipper |
-| `analyst` | Read the `logs` database | Me and the daily backup |
-| `admin` | Everything | Setup only |
-
-If an attacker takes over the Wazuh manager they get a credential that can add junk but cannot read or delete history. That makes it a decent tamper-resistance property for a log store. I query from my Mac through an SSH tunnel via the Proxmox host, since MongoDB is not reachable from anywhere else.
+The shipper writes with an account that can **insert but not read and not delete**. If someone ever takes over the Wazuh machine, the credentials they find can add junk but can't read or erase my history. A second account can only read, and the all-powerful admin account is only for setup. That's least privilege applied to a log store: evidence you can't easily destroy.
 
 ## What went wrong
 
-**MongoDB 8.0 would not start.** On the Proxmox host's kernel the server refuses to run because of a tcmalloc/rseq bug (SERVER-121912, affecting Linux 6.19 to 7.0.13). MongoDB 7.0 has no such check, so I pinned 7.0. Moving to 8.0 later needs a dump and restore, or a host kernel at 7.0.14 or newer.
+MongoDB 8.0 refused to start. On my host's Linux kernel version it hits a known memory bug (reported as SERVER-121912) and stops. MongoDB 7.0 doesn't have that check, so I pinned 7.0 and noted how to move to 8.0 later. It was a good reminder that your stack includes the kernel under it.
 
-**Ordering between stacks.** The log store must exist before the Wazuh stack is given its address, or the shipper has nowhere to write. The firewall rule to MongoDB also has to sit above the private-range drops.
+## What I'd improve
 
-## Results and what I would change
+- Backups are a daily dump on the same disk. I want a copy somewhere else.
+- Traffic to the database isn't encrypted. It only crosses my private network, but TLS would be better.
 
-Queries like "high-level honeypot alerts, newest first" or "alert counts by rule for production hosts" are one-liners in `mongosh`. Retention is off by default (keep everything), with an optional TTL index on `ts`.
+## What I'm looking forward to
 
-Remaining gaps, which I would fix next:
+Having the history is the point. Once the honeypots have collected enough, I want to write up what I find, with real numbers.
 
-- Daily `mongodump` backups (seven copies) are on the same disk. They need to be copied off-host.
-- Traffic to MongoDB is unencrypted. It crosses only the NAT bridge, but TLS would be better.
-
-See the [log store project page](/projects/mongodb-log-store/) and the [Wazuh stack](/projects/wazuh-siem-homelab/).
+Previous chapter: [the honeypots](/blog/honeypots-in-lxc-cowrie-snare-wazuh/). Details are on the [project page](/projects/mongodb-log-store/).
 
 ---
 

@@ -1,6 +1,6 @@
 ---
-title: "Cowrie and Snare/Tanner in LXC: a small honeypot with real detection rules"
-description: "Two firewalled LXC honeypots (Cowrie SSH/Telnet, Snare/Tanner web) reporting to Wazuh, with custom rules mapped to MITRE ATT&CK and a safety model that assumes the decoys will be compromised."
+title: "I built traps for attackers: honeypots that tell me how real attacks behave"
+description: "Why I run honeypots (a fake SSH server and a fake website), what I want to learn from them, and how I wired them into Wazuh with detection rules, while keeping the traps from becoming a way in."
 date: 2026-10-30
 category: writeup
 tags: ["Honeypot", "Cowrie", "Snare", "Tanner", "Wazuh", "MITRE ATT&CK", "Detection engineering"]
@@ -19,62 +19,58 @@ sources:
 draft: false
 ---
 
-**TL;DR:** I rebuilt my honeypot platform as two small Proxmox containers: one running Cowrie (a fake SSH and Telnet shell) and one running Snare and Tanner (a cloned website with an analysis back end). Both send logs to Wazuh, where seven custom rules and Wazuh's built-in web-attack rules turn attacker behaviour into alerts mapped to MITRE ATT&CK.
+**TL;DR:** A honeypot is a machine that exists to be attacked. I run two: a fake SSH and Telnet server, and a fake website. They are my way of learning how real attacks behave, because the best teacher is watching one. This is chapter four of my [homelab story](/blog/hypervisor-firewall-pattern-homelab/).
 
-## The problem
+## What I was trying to do
 
-My original platform used four VMs, two VLANs and a custom dashboard. It suits a proper network, but it is heavy for a homelab host with a single NAT bridge. I wanted the same decoys and the same detections, using the SIEM I already run as the dashboard, with a design simple enough to rebuild in minutes.
+Anything connected to the internet is probed constantly by automated scanners. I've read about it, but I wanted to see it. What usernames do they try? What do they type once they think they're in? What do they try to download?
 
-## Design
+I already had an [Azure version of this](/projects/ai-soc-azure-honeypot/) with a custom dashboard. This time I wanted a smaller one that fits a homelab, using the SIEM I'd just built as the dashboard. My aims:
 
-```text
-internet ─▶ portal.example.com ─▶ Cloudflare ─▶ tunnel ─▶ nginx ─▶ Snare ─▶ Tanner     [hp-web]
-lab network ─▶ :22 SSH, :23 Telnet ─▶ Cowrie                                          [hp-cowrie]
-both ─▶ Wazuh agent ─▶ manager :1514 ─▶ rules 100100-100199
-```
+- **Learn from real behaviour**, not textbook examples.
+- **Practise detection engineering**: turn raw logs into alerts that someone would actually act on.
+- **Stay safe.** A honeypot is bait. If it gets owned, it must be a dead end.
 
-**Cowrie** presents a fake Debian shell on ports 22 and 23 and records every login attempt, command and file transfer. It is never published; only the lab can reach it. My real admin SSH moved to port 22222.
+## The two traps
 
-**Snare and Tanner** clone a website and judge each request. They run in Docker behind nginx, with images pinned by digest, all capabilities dropped, and memory and process limits. This one *is* published through a Cloudflare Tunnel, with no login, because a honeypot nobody can reach catches nothing.
+**Cowrie** pretends to be an SSH and Telnet server. It looks like a Debian box, lets attackers "log in", and records everything: logins, commands, files they try to download. It's only reachable from my lab, never from the internet.
 
-## The detections
+**Snare and Tanner** pretend to be a website. Snare clones a real site, and Tanner decides how to respond to what visitors try. This one is published to the internet through a tunnel with no login, on purpose, because a trap nobody can reach catches nothing.
 
-The decoys' logs have to become something a human would act on. Cowrie writes JSON with an `eventid`, so one parent rule matches `^cowrie\.` and child rules branch from it:
+## Turning logs into something meaningful
 
-| Rule | Level | Meaning | ATT&CK |
-|---|---|---|---|
-| 100101 | 4 | Connection to the decoy | |
-| 100102 | 5 | Failed login | T1110 Brute Force |
-| 100103 | 9 | Attacker logged in | T1078 Valid Accounts |
-| 100104 | 10 | Command typed in the shell | T1059 Command Interpreter |
-| 100105 | 12 | File downloaded or uploaded | T1105 Ingress Tool Transfer |
-| 100106 | 10 | 8 failed logins from one address in 2 minutes | T1110 |
+Raw logs are just noise, so I wrote detection rules in Wazuh, mapped to the MITRE ATT&CK framework that defenders use to describe attacker behaviour:
 
-Rule 100106 is a frequency rule: it counts rule 100102 hits with `same_field` set to `src_ip` over a 120 second window, so one noisy scanner becomes one high-level alert, not eight low ones.
+| What happens | Alert level | ATT&CK idea |
+|---|---|---|
+| Someone connects | low | |
+| A failed login | low | Brute force |
+| An attacker gets in | high | Valid accounts |
+| They type a command | high | Command execution |
+| They download or upload a file | highest | Ingress tool transfer |
+| Eight failed logins from one address within two minutes | high | Brute force |
 
-For the web decoy I reused Wazuh's built-in rules (SQL injection, XSS, shellshock, path traversal and 4xx scanning). The gap was ordinary requests: Wazuh's rule 31108 drops 2xx and 3xx traffic at level 0, which would make a decoy's normal traffic invisible. Rule 100110 matches the decoy's log path and surfaces it at level 3.
+That last one is my favourite. It's a single alert for a persistent attacker instead of eight small ones, which is how a real analyst would want it. For the web trap I use Wazuh's built-in attack rules, plus one of mine so that ordinary visits show up too (Wazuh hides normal requests by default).
 
-## The safety model: assume compromise
+## Keeping the trap from becoming a way in
 
-- Both containers are unprivileged and firewalled by the hypervisor, outside their reach.
-- Inbound is limited to the Proxmox host and the lab, on the decoy ports.
-- Outbound is DNS, NTP, the Wazuh manager, then the public internet only. Private ranges are dropped before the web is allowed, so a compromised decoy cannot reach the LAN, the other containers or Tailscale.
-- Cowrie runs as an unprivileged user in a sandboxed systemd unit with a memory cap, and binds ports 22 and 23 through `CAP_NET_BIND_SERVICE` alone.
-- The tunnel reaches nginx from the Docker gateway, which is the only address nginx trusts for the `CF-Connecting-IP` header. The logs show real attackers, and a lab user cannot forge that header.
+I assume both traps will be compromised. So:
 
-## What went wrong
+- They're unprivileged containers behind a hypervisor firewall they can't switch off.
+- They can't reach my home network, my other containers or my VPN. They can only reach the public internet, because Cowrie has to fetch whatever attackers try to download.
+- The website trap runs in Docker with all extra permissions removed and memory limits applied, and it only trusts one address to tell it who the visitor really is, so nobody can forge their identity in my logs.
 
-**Docker needs `keyctl`.** Running Docker in an unprivileged container requires that feature, but Proxmox lets only `root@pam` set feature flags, not an API token. The fix is a `null_resource` that runs `pct set` on the host over SSH and restarts the container once. The provider is told to ignore feature drift so it does not revert it.
+## What I learned
 
-**Parallel creation raced.** Two containers created at once could ask for the same "next free" ID, so IDs are fixed.
+- Detection is a design problem. Deciding what deserves an alert is harder than collecting logs.
+- Odd technical details bite. Docker inside an unprivileged container needs a feature that only the main Proxmox account can set, so I wrote a small step to set it over SSH.
+- Outbound internet access from a honeypot is its biggest risk, and I want to tighten it later.
 
-**Rootcheck noise.** Wazuh's rootcheck reports many anomalies inside LXC containers that have nothing to do with attackers, and I disabled hardening and rootcheck scans for the whole `honeypots` group.
+## An honest note
 
-## Results and what I would change
+These are new, so I'm not going to quote attack statistics I haven't measured. Once there's real data, I want to write about what I find.
 
-I now have two decoys, with detections and an audit trail, defined in code. The weakest point is egress: outbound web stays open because Cowrie must fetch what attackers `wget`, and Tanner may fetch URLs for remote-file-inclusion probes. If that worries me I can restrict it after the install. I also dropped the larger platform's XDP ban filter here, since it needs a real kernel. I make no claims about attack volumes, because the point of this write-up is the design.
-
-See the [honeypot project page](/projects/homelab-honeypots-lxc/), the [Wazuh stack](/projects/wazuh-siem-homelab/) and my larger [Azure honeypot](/projects/ai-soc-azure-honeypot/).
+Next chapter: [keeping every event for later](/blog/wazuh-events-to-mongodb-insert-only-shipper/). Details are on the [project page](/projects/homelab-honeypots-lxc/).
 
 ---
 

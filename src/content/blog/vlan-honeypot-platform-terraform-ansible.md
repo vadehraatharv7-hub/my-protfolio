@@ -1,6 +1,6 @@
 ---
-title: "A two-zone honeypot platform on Proxmox with Terraform and Ansible"
-description: "Designing a honeypot platform with a DMZ and a core VLAN: unattended VM installs, per-VM hypervisor firewalls from Terraform, Ansible roles, and isolation tests that are supposed to fail."
+title: "The bigger design: a honeypot platform with separate network zones"
+description: "My plan for a larger honeypot platform on Proxmox: decoys in one network zone, the data in another, built with Terraform and Ansible and tested by connections that must fail. Not yet run on hardware."
 date: 2026-10-30
 category: writeup
 tags: ["Honeypot", "Terraform", "Ansible", "Proxmox", "VLAN", "Network segmentation"]
@@ -17,58 +17,46 @@ sources:
 draft: false
 ---
 
-**TL;DR:** This is the Proxmox version of my honeypot platform: two decoys in a DMZ VLAN, a dashboard and a database in a core VLAN. Terraform creates the VMs and their hypervisor firewalls, Ansible configures them, and a verification playbook tries connections that must fail to prove the zones are isolated. It has been validated and rendered but not yet run against real hardware.
+**TL;DR:** My container-based honeypots are small by design. This is the larger version I designed for when I have the hardware: the traps in one isolated network zone and everything valuable in another, built entirely from code. It's validated, but I haven't run it on real hardware yet, and I'll say so plainly. This is the sixth part of my [homelab story](/blog/hypervisor-firewall-pattern-homelab/).
 
-## The problem
+## What I was trying to do
 
-A honeypot is a machine you expect to lose. The platform around it, the dashboard that shows attacks and the database that stores them, must not be lost with it. The design question is how to make the DMZ decoys compromisable without handing an attacker a path to the data.
+A honeypot is a machine you expect to lose. The dashboard that shows the attacks and the database that stores them must not be lost with it. The question that drove this design was: **how do I let the traps be compromised without giving an attacker any path to the data?**
 
-## Design
+I'd already done a version of this on Azure. I wanted the same platform on my own Proxmox host, and I wanted to practise the skills a real security team uses: network segmentation, automated builds and proving your isolation works.
 
-```text
-Internet ─▶ DMZ  VLAN 66 10.66.0.0/24                      CORE VLAN 67 10.67.0.0/24
-            vm-honeypot .10  Cowrie (SSH 22, Telnet 23) ──8081──▶ vm-monitoring .10  SecDash dashboard
-            vm-snare    .11  Snare/Tanner (80, 443)     ──8081──▶         │
-                                                                          └──27017──▶ vm-database .11  MongoDB
-```
+## The design
 
-Isolation is enforced twice:
+Two zones, each its own VLAN:
 
-1. **Separate VLANs** per zone, with the router refusing inter-zone traffic except DMZ to the dashboard on 8081.
-2. **A hypervisor firewall on every VM's NIC**, policy drop both ways, with MAC and IP spoofing filters. Honeypots may talk only to the dashboard on 8081, DNS, NTP and the public internet. Only the dashboard may reach the database on 27017. Real SSH moved to port 22222, key-only and from the admin range.
+- **DMZ (the exposed zone):** a Cowrie SSH/Telnet decoy and a Snare/Tanner web decoy.
+- **Core (the protected zone):** the dashboard and the MongoDB database.
 
-## Terraform
+The only thing the traps may send to the core is their events, to the dashboard on one port. Only the dashboard may talk to the database. Nothing in the DMZ can reach the database, my home network, or any private network.
 
-Terraform handles everything up to a running OS:
+I enforce that twice, on purpose: the router limits traffic between zones, and a firewall on the hypervisor guards every virtual machine's network card. If I get one wrong, the other still stands.
 
-- It downloads the Ubuntu 22.04 server ISO and checks its SHA-256.
-- It builds one seed ISO per VM carrying the unattended-install configuration: user, SSH key, static IP, SSH port, packages.
-- It creates the four VMs on the zone VLANs and renders one firewall file per VM.
-- It writes the Ansible inventory, so the next tool needs no manual input.
+## How it's built
 
-Ubuntu's installer insists on asking `Continue with autoinstall?` because the install wipes the disk. A playbook handles that one prompt with `qm sendkey` on the Proxmox host, and then waits for each VM to answer on SSH.
+- **Terraform** downloads and verifies the operating-system image, creates four VMs that install themselves unattended, and writes each VM's firewall rules.
+- **Ansible** then hardens each machine and installs the right software for its role: SSH hardening, automatic security updates, the database, the dashboard and the decoys. It's idempotent, so running it twice changes nothing that's already right.
 
-## Ansible
+## The part I find most useful: tests that must fail
 
-Roles run in order: common hardening (updates, NTP, hardened `sshd`, fail2ban on 22222, unattended security updates, kernel hardening), MongoDB 8.0 (authentication on, bound to the private address, version held, daily backup), the SecDash dashboard (Go backend, Node frontend, PM2, nginx with HTTPS), then the sensors: Cowrie, Snare and Tanner, log shipping with Vector, and the XDP ban filter. Everything is idempotent, so a second run changes nothing that is already right.
+Checking that services are running doesn't prove isolation. So my verification playbook tries connections that should be impossible: from each decoy it tries to reach the database, the dashboard's admin SSH and its web UI, and from the dashboard it tries the decoy's admin SSH. If any of them connects, the run stops and tells me to check the firewall.
 
-## Tests that are supposed to fail
+That's the only reliable way I know to find out that a firewall switch is off, or a rule file was never written. A security control you haven't tried to break is just a hope.
 
-The step I find most useful is `verify.yml`. Checking that services are running proves little about isolation, so it also does the following:
+## Being honest about where it is
 
-- From each honeypot it tries to reach the database (27017), the dashboard's SSH (22222) and its web UI (443). All must fail.
-- From the dashboard it tries the honeypot's admin SSH. That must fail too.
+- **It hasn't been run on real hardware.** It passes Terraform's validation, and I rendered and inspected the firewall rules, install files and inventory, but I'd run a `terraform plan` first and I won't claim a tested deployment.
+- Terraform can't create bridges, VLANs or firewall rules for me, so those depend on my network setup.
+- The state file contains passwords, so it's treated as a secret.
+- Backups still sit on the same disk.
 
-If any connection succeeds, the run stops and points to the Proxmox firewall. This is how you find out that the datacenter firewall is still switched off, or that a firewall file never got written.
+## Why I'm sharing it
 
-## What I would be honest about
-
-- **It has not been applied to real hardware.** It passes `terraform validate`, and the firewall files, seeds and inventory were rendered and inspected, but I recommend `terraform plan` first. I would rather say this than imply a tested deployment.
-- The provider cannot create bridges, VLANs or firewall rules, so those depend on a VLAN-aware bridge I already have, my router, and the rendered files.
-- `terraform.tfstate` holds the database password and a throwaway OS password, so state is a secret.
-- Backups remain on the database VM's disk, and MongoDB traffic is unencrypted though confined to the core VLAN.
-
-The lighter container version for a single NAT bridge is on the [honeypot LXC page](/projects/homelab-honeypots-lxc/), and this design is on its [project page](/projects/proxmox-vlan-honeypot-platform/).
+Because designing something carefully, saying which parts are proven and which aren't, and planning how to test it, is the work I want to be doing. The lighter version that runs today is [here](/blog/honeypots-in-lxc-cowrie-snare-wazuh/), and the details of this one are on its [project page](/projects/proxmox-vlan-honeypot-platform/).
 
 ---
 

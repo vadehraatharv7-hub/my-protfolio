@@ -18,6 +18,10 @@ github: "https://github.com/vadehraatharv7-hub/homelab/tree/main/projects/honeyp
 order: 4
 ---
 
+## Why I built this
+
+I want to see how real attacks behave, not just read about them: which usernames get tried, what attackers type once they think they are in, what they try to download. I also wanted to practise detection engineering, which means turning raw logs into alerts someone would act on. The honeypots are bait, so the other half of the goal is making sure they can never become a way in. The story is in [I built traps for attackers](/blog/honeypots-in-lxc-cowrie-snare-wazuh/).
+
 ## What it is
 
 Honeypots are systems that exist to be attacked, so that defenders can watch what attackers try. This is the homelab-sized version of my larger [Azure honeypot and AI-SOC project](/projects/ai-soc-azure-honeypot/): the same decoys, but with no separate dashboard or database, because **Wazuh is the dashboard**. Two unprivileged Debian 12 containers sit on the NAT bridge, each firewalled by the hypervisor and each running a Wazuh agent.

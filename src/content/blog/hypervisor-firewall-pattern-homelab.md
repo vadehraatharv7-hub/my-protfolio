@@ -1,9 +1,9 @@
 ---
-title: "One firewall pattern for every container: lessons from six Terraform homelab stacks"
-description: "The Proxmox hypervisor firewall pattern reused across my homelab: drop by default, block private ranges before allowing the web, write rules from Terraform, and keep secrets out of a public repo."
+title: "Building a homelab where nothing is trusted: the story of six projects"
+description: "Why I built a Proxmox homelab as code: to practise both sides of security, host real things safely, attract attackers on purpose, and watch them. How six small projects fit together."
 date: 2026-10-30
 category: writeup
-tags: ["Proxmox", "Terraform", "Firewall", "Homelab", "Least privilege", "gitleaks"]
+tags: ["Homelab", "Proxmox", "Terraform", "Security", "Learning", "Firewall"]
 project: proxmox-homelab-iac
 sources:
   - title: "Proxmox VE Firewall"
@@ -15,65 +15,52 @@ sources:
 draft: false
 ---
 
-**TL;DR:** Across six stacks in my homelab repository, every container gets the same firewall: policy drop in both directions, spoofing filters on, a short allow list, and a rule that blocks all private address ranges *before* allowing the public web. It is written by Terraform, enforced by the hypervisor, and cannot be turned off from inside a compromised guest.
+**TL;DR:** I'm studying cybersecurity, and I wanted somewhere to practise it for real, not just read about it. So I turned a spare Proxmox machine at home into a small lab, and I built it entirely from code so I can wipe and rebuild any part of it. This post is the big picture: what I'm trying to do, how the six projects connect, and what I'm learning.
 
-## The problem
+## What I'm trying to do
 
-My homelab runs things I do not fully trust: a deliberately vulnerable web app, honeypots that expect to be compromised, and a SIEM that holds logs from everything. They share a physical host with an app I use every day. The question for each new container was the same: if this one is owned, what can the attacker reach?
+Security is easy to study from the outside and hard to feel. I can read about brute-force attacks, command injection or log analysis, but it sticks when I have to run the thing, break it, defend it and explain what happened.
 
-## The pattern
+So I set myself a simple goal with three parts:
 
-Each stack renders `/etc/pve/firewall/<vmid>.fw` and copies it to the host. The core of every file is identical:
+1. **Host real things safely**, so I learn what "safe" actually takes.
+2. **Attract attackers on purpose** with honeypots, so I can watch how real attacks behave.
+3. **Build the monitoring** to notice and record what happens, and keep the evidence.
 
-```text
-[OPTIONS]
-enable: 1
-policy_in: DROP
-policy_out: DROP
-macfilter: 1
-ipfilter: 1
+The rule I gave myself: everything is code. If I can't rebuild it from a repository, I don't really understand it.
 
-IN  ACCEPT  (a short list: the Proxmox host for SSH, plus whatever the role needs)
-OUT ACCEPT  DNS to the resolver, NTP
-OUT DROP    10.0.0.0/8  172.16.0.0/12  192.168.0.0/16  100.64.0.0/10  169.254.0.0/16
-OUT ACCEPT  tcp 80,443   (and the Cloudflare tunnel port where one is used)
-```
+## The six projects, as one story
 
-Four details do the real work:
+They look like separate folders, but I think of them as chapters:
 
-1. **Enforced outside the guest.** The Proxmox firewall acts on the container's virtual NIC on the host. Root inside the container cannot disable it, which is the whole point for decoys and training targets.
-2. **Order matters.** The first matching rule wins, so the private-range drops come *before* the public web is allowed. A compromised container can fetch packages from the internet but cannot reach the LAN, a sibling container, or a Tailscale address (`100.64.0.0/10`).
-3. **Exceptions go above the drops.** The Wazuh container needs to reach MongoDB, which lives on the same private bridge, so that single rule is placed before the private-range drops. The honeypots get the same treatment for the Wazuh manager.
-4. **Spoofing filters.** `macfilter` and `ipfilter` plus an IP set stop a guest forging another machine's MAC or address.
+1. **[Hosting my own app](/blog/budget-tracker-zero-open-ports-proxmox/).** I started with something normal: put my Budget Tracker app on the internet without opening a port on my home router.
+2. **[A target to practise on](/blog/sharing-dvwa-safely-cloudflare-access/).** I built a deliberately vulnerable web app and worked out how to let friends attack it safely.
+3. **[Eyes on everything](/blog/wazuh-siem-unprivileged-lxc-terraform/).** I set up a SIEM (Wazuh), because attacks you can't see teach you nothing.
+4. **[Bait](/blog/honeypots-in-lxc-cowrie-snare-wazuh/).** I added honeypots, fake SSH and web servers that exist to be attacked, wired into the SIEM with my own detection rules.
+5. **[Memory](/blog/wazuh-events-to-mongodb-insert-only-shipper/).** I made a separate database that keeps every event, so I can ask new questions of old data later.
+6. **[The bigger design](/blog/vlan-honeypot-platform-terraform-ansible/).** I designed a larger version with separate network zones, for when I have the hardware and a proper router.
 
-## Writing it from Terraform
+## The idea underneath: assume something will be compromised
 
-The `telmate/proxmox` provider cannot manage firewall rules, so each stack uses a `null_resource` with a `file` provisioner to write the rules, and a destroy-time provisioner that removes the file. Because destroy provisioners may only read `self`, the values they need are stored in `triggers`. The rules are hashed (`sha256(local.firewall_file)`), so any change to the allow list re-applies the file.
+The one habit I want to take away from this lab is a way of thinking. Instead of asking "how do I stop every attack?", I ask "when this one gets owned, what can the attacker reach?"
 
-One prerequisite catches people out: per-container rules do nothing until the datacenter firewall is switched on.
+So every container gets the same treatment. It can't talk to anything it doesn't need to, and the rules that enforce that live on the hypervisor, outside the container, so someone with a shell inside can't turn them off. Concretely: block all inbound and outbound traffic by default, allow a short list, and block my home network and private ranges *before* allowing the public internet. The order matters, because the first matching rule wins.
 
-## Per-role allow lists
+I also keep it all in a public repository, which taught me its own lesson: how to keep secrets out of code. State files, passwords and tokens are git-ignored, a pre-commit hook scans for leaks, and GitHub checks again when I push.
 
-| Container | Inbound | Outbound extras |
-|---|---|---|
-| DVWA | SSH and HTTP from the host | none |
-| Wazuh | SSH and 443 from the host; 1514 and 1515 from listed agent addresses | MongoDB on 27017 |
-| Log store | SSH from the host; 27017 from the Wazuh manager | none |
-| Cowrie decoy | Admin SSH from the host; 22 and 23 from the lab | Wazuh manager on 1514 and 1515 |
-| Web decoy | SSH from the host; 80 and 443 from the lab | Wazuh manager; tunnel port |
+## What I'm still figuring out
 
-## Beyond the firewall
+I'd rather be honest about the gaps than pretend it's finished:
 
-- **Unprivileged LXC** everywhere, so root in a container is a normal user on the host.
-- **One Proxmox API token**, shared by symlink to a git-ignored file, so the secret exists once.
-- **A public repository with no secrets.** `.gitignore` covers state, tfvars, credentials and inventory files. A pre-commit hook blocks them and runs gitleaks. GitHub push protection and a gitleaks workflow check again on the remote. If a secret is ever committed, the order is: rotate first (it is public the moment it is pushed), then clean the history.
-- **Conditional resources and validated inputs**, so a stack can be applied in layers and a `check` block fails loudly if, for example, sharing is on with an empty guest list.
+- Everything shares one network, so a stricter split into zones is the next step (that's the larger design above).
+- Backups sit on the same disk as the things they back up.
+- The honeypots are new, so I'm not going to claim numbers about attacks I haven't measured yet.
 
-## What I would change
+## Why this matters to me
 
-The firewall is as strong as the bridge it protects. Everything shares one NAT bridge, so a container that is allowed to talk to Wazuh can in principle try the same port on that address. VLANs per zone, as in my [two-zone honeypot platform](/projects/proxmox-vlan-honeypot-platform/), would be the next tightening for the container stacks. Outbound web is also still open for decoys that need to fetch attacker downloads, which is a known abuse path.
+I want to be someone who can build infrastructure, secure it, and then prove it works by watching it get tested. This lab is where I'm practising all three. If you're working on something similar, I'd love to compare notes.
 
-See the projects that use this pattern: [DVWA](/projects/dvwa-cloudflare-access-lab/), [Wazuh](/projects/wazuh-siem-homelab/), [honeypots](/projects/homelab-honeypots-lxc/) and the [log store](/projects/mongodb-log-store/).
+The code is in the [homelab repository](https://github.com/vadehraatharv7-hub/homelab), and the details of each stack are on the [project pages](/projects/).
 
 ---
 

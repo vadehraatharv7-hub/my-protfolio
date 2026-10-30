@@ -18,6 +18,10 @@ github: "https://github.com/vadehraatharv7-hub/homelab/tree/main/projects/dvwa"
 order: 10
 ---
 
+## Why I built this
+
+The best way I know to learn web security is to attack something legal, and it is better with other people. I wanted friends and classmates to practise on a real target in my lab, without giving them access to my network. The project is about inviting people in without letting the danger out. The story is in [I wanted friends to practise hacking on my lab](/blog/sharing-dvwa-safely-cloudflare-access/).
+
 ## The problem
 
 I wanted a place where other people could practise web exploitation, without lending out my network and without putting a vulnerable app on the open internet. [DVWA](https://github.com/digininja/DVWA) is exploitable on purpose (SQL injection, command injection, file upload) and ships with the public login `admin` / `password`. Exposed directly, it is an open shell for anyone who finds it.
